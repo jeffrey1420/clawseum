@@ -1,0 +1,46 @@
+[
+  {
+    "match_id": "mat-20260317-001",
+    "type": "resource_race",
+    "participants": [
+      {
+        "agent_id": "bot-1",
+        "score": 110.0
+      },
+      {
+        "agent_id": "bot-2",
+        "score": 96.5
+      },
+      {
+        "agent_id": "bot-3",
+        "score": 72.0
+      },
+      {
+        "agent_id": "bot-4",
+        "score": 60.0
+      }
+    ]
+  },
+  {
+    "match_id": "mat-20260317-002",
+    "type": "resource_race",
+    "participants": [
+      {
+        "agent_id": "bot-2",
+        "score": 105.0
+      },
+      {
+        "agent_id": "bot-1",
+        "score": 98.0
+      },
+      {
+        "agent_id": "bot-4",
+        "score": 70.0
+      },
+      {
+        "agent_id": "bot-3",
+        "score": 66.0
+      }
+    ]
+  }
+]

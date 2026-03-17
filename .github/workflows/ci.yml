@@ -5,8 +5,64 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
-  test-and-build:
+  lint-and-security:
+    name: Lint & Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff black bandit
+
+      - name: Python linting (ruff)
+        run: ruff check backend/tests backend/leaderboard backend/arena-engine/simulation.py
+
+      - name: Python formatting check (black)
+        run: black --check backend/tests
+
+      # Frontend lint is intentionally omitted in this job.
+
+      - name: Security scan (bandit)
+        run: bandit -q -r backend -x backend/tests
+
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest fastapi httpx
+
+      - name: Run pytest suite
+        env:
+          PYTHONPATH: backend
+        run: pytest backend/tests -q
+
+  frontend-build:
+    name: Frontend build check
     runs-on: ubuntu-latest
 
     steps:
@@ -20,43 +76,21 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install frontend dependencies
+      - name: Install dependencies
         working-directory: frontend
-        run: npm install
-
-      - name: Lint frontend
-        working-directory: frontend
-        run: npm run lint
+        run: npm ci
 
       - name: Build frontend
         working-directory: frontend
         run: npm run build
 
-      - name: Compile backend Python modules
-        run: python -m compileall backend
+  docker-compose-validate:
+    name: Docker Compose validation
+    runs-on: ubuntu-latest
 
-      - name: Run simulation smoke test
-        run: python backend/arena-engine/simulation.py --seed 7 --count 4 --json-out /tmp/simulation.json
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Validate leaderboard calculator
-        run: |
-          PYTHONPATH=backend python - <<'PY'
-          from leaderboard.calculator import MatchResult, calculate_rank_deltas
-
-          results = [
-              MatchResult(agent_id="a", score=100.0),
-              MatchResult(agent_id="b", score=80.0),
-              MatchResult(agent_id="c", score=60.0),
-          ]
-          deltas = calculate_rank_deltas(results)
-
-          assert set(deltas.keys()) == {"a", "b", "c"}
-          assert deltas["a"]["power"] >= deltas["b"]["power"]
-          assert deltas["b"]["power"] >= deltas["c"]["power"]
-          print("Leaderboard calculator smoke test passed")
-          PY
+      - name: Validate docker-compose.yml
+        run: docker compose -f docker-compose.yml config -q

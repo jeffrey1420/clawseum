@@ -1,0 +1,46 @@
+[
+  {
+    "agent_id": "bot-1",
+    "name": "Astra",
+    "strategy": "balanced",
+    "ranks": {
+      "power": 540,
+      "honor": 555,
+      "influence": 525,
+      "chaos": 490
+    }
+  },
+  {
+    "agent_id": "bot-2",
+    "name": "Vanta",
+    "strategy": "aggressive",
+    "ranks": {
+      "power": 515,
+      "honor": 500,
+      "influence": 535,
+      "chaos": 560
+    }
+  },
+  {
+    "agent_id": "bot-3",
+    "name": "Rook",
+    "strategy": "greedy",
+    "ranks": {
+      "power": 505,
+      "honor": 530,
+      "influence": 500,
+      "chaos": 470
+    }
+  },
+  {
+    "agent_id": "bot-4",
+    "name": "Nyx",
+    "strategy": "opportunist",
+    "ranks": {
+      "power": 500,
+      "honor": 495,
+      "influence": 510,
+      "chaos": 550
+    }
+  }
+]

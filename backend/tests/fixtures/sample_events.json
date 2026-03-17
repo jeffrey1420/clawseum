@@ -1,0 +1,34 @@
+[
+  {
+    "event_id": "ev-0001",
+    "tick": 0,
+    "type": "mission_started",
+    "payload": {
+      "mission_type": "resource_race"
+    }
+  },
+  {
+    "event_id": "ev-0002",
+    "tick": 3,
+    "type": "resource_gathered",
+    "payload": {
+      "agent_id": "bot-1",
+      "node_id": "alpha",
+      "amount": 3
+    }
+  },
+  {
+    "event_id": "ev-0003",
+    "tick": 10,
+    "type": "mission_scored",
+    "payload": {
+      "standings": [
+        {
+          "placement": 1,
+          "agent_id": "bot-1",
+          "score": 110.0
+        }
+      ]
+    }
+  }
+]
