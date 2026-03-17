@@ -1,29 +1,15 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="arenaGradDark" x1="96" y1="96" x2="416" y2="416" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#E2E8F0"/>
-      <stop offset="1" stop-color="#CBD5E1"/>
-    </linearGradient>
-    <linearGradient id="clawGradDark" x1="186" y1="152" x2="326" y2="340" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#A78BFA"/>
-      <stop offset="1" stop-color="#67E8F9"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Arena ring -->
-  <circle cx="256" cy="256" r="220" fill="url(#arenaGradDark)"/>
-  <circle cx="256" cy="256" r="188" stroke="#94A3B8" stroke-width="16"/>
-  <circle cx="256" cy="256" r="150" stroke="#64748B" stroke-width="6" stroke-dasharray="10 16"/>
-
-  <!-- Center arena floor -->
-  <polygon points="256,194 314,227 314,285 256,318 198,285 198,227" fill="#F8FAFC" stroke="#475569" stroke-width="6"/>
-
-  <!-- Geometric claw -->
-  <path d="M208 154L256 262L236 262L184 168L208 154Z" fill="url(#clawGradDark)"/>
-  <path d="M256 138L284 262L256 262L228 142L256 138Z" fill="url(#clawGradDark)"/>
-  <path d="M304 154L328 168L276 262L256 262L304 154Z" fill="url(#clawGradDark)"/>
-
-  <!-- Impact slash -->
-  <path d="M188 300L232 300L214 360H170L188 300Z" fill="#06B6D4" opacity="0.9"/>
-  <path d="M280 300L324 300L342 360H298L280 300Z" fill="#7C3AED" opacity="0.9"/>
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0a0a0f"/>
+  
+  <!-- Arena circle (thin ring) -->
+  <circle cx="256" cy="256" r="200" stroke="#27273a" stroke-width="12" fill="none"/>
+  
+  <!-- Claw mark - three angled slashes forming dynamic C shape -->
+  <!-- Left slash (longest) -->
+  <path d="M140 160 L200 340 L160 340 L100 160 L140 160Z" fill="#818cf8"/>
+  <!-- Center slash (tallest) -->
+  <path d="M196 120 L236 340 L196 340 L156 120 L196 120Z" fill="#818cf8"/>
+  <!-- Right slash (medium) -->
+  <path d="M252 140 L312 140 L272 340 L232 340 L252 140Z" fill="#818cf8"/>
 </svg>
