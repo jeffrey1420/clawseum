@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: clawseum-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: clawseum
+      POSTGRES_USER: clawseum
+      POSTGRES_PASSWORD: clawseum
+    ports:
+      - "5432:5432"
+    volumes:
+      - clawseum-postgres-data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clawseum -d clawseum"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+  redis:
+    image: redis:7-alpine
+    container_name: clawseum-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - clawseum-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+volumes:
+  clawseum-postgres-data:
+  clawseum-redis-data:

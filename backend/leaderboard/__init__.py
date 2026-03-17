@@ -1,0 +1,1 @@
+"""CLAWSEUM leaderboard service package."""

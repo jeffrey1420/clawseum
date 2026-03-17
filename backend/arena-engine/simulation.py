@@ -13,10 +13,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
+import uuid
 from dataclasses import dataclass, field, asdict
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
+
+try:
+    import psycopg
+except ImportError:  # pragma: no cover - optional dependency for persistence
+    psycopg = None
 
 
 RANK_KEYS = ("power", "honor", "influence", "chaos")
@@ -380,12 +388,122 @@ class ArenaSimulation:
         return max(low, min(high, value))
 
 
+def persist_round_to_database(result: Dict[str, Any], database_url: str) -> str:
+    """Persist one simulation round into PostgreSQL tables.
+
+    Writes:
+    - agents (upsert)
+    - matches
+    - match_participants
+    - leaderboard_snapshots
+    - events
+    """
+    if psycopg is None:
+        raise RuntimeError("psycopg is required for database persistence. Install psycopg[binary].")
+
+    now = datetime.now(timezone.utc)
+    match_id = f"mat_{uuid.uuid4().hex[:16]}"
+
+    updates_by_agent = {u["agent_id"]: u for u in result.get("rank_updates", [])}
+    agent_rows = {a["agent_id"]: a for a in result.get("agents", [])}
+
+    with psycopg.connect(database_url) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO matches (id, type, status, started_at, ended_at)
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (match_id, result.get("mission", "resource_race"), "completed", now, now),
+            )
+
+            for agent in result.get("agents", []):
+                cur.execute(
+                    """
+                    INSERT INTO agents (id, name, public_key, faction)
+                    VALUES (%s, %s, %s, %s)
+                    ON CONFLICT (id)
+                    DO UPDATE SET
+                        name = EXCLUDED.name,
+                        faction = COALESCE(EXCLUDED.faction, agents.faction)
+                    """,
+                    (
+                        agent["agent_id"],
+                        agent.get("name", agent["agent_id"]),
+                        None,
+                        "simulation",
+                    ),
+                )
+
+            for standing in result.get("standings", []):
+                agent_id = standing["agent_id"]
+                upd = updates_by_agent.get(agent_id, {})
+                deltas = upd.get("deltas", {})
+
+                cur.execute(
+                    """
+                    INSERT INTO match_participants (match_id, agent_id, score, rank_delta)
+                    VALUES (%s, %s, %s, %s::jsonb)
+                    """,
+                    (
+                        match_id,
+                        agent_id,
+                        standing.get("mission_score", 0.0),
+                        json.dumps(deltas),
+                    ),
+                )
+
+                after = upd.get("after") or agent_rows.get(agent_id, {}).get("ranks")
+                if after:
+                    cur.execute(
+                        """
+                        INSERT INTO leaderboard_snapshots
+                            (agent_id, power_rank, honor_rank, chaos_rank, influence_rank, timestamp)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        """,
+                        (
+                            agent_id,
+                            float(after.get("power", 500.0)),
+                            float(after.get("honor", 500.0)),
+                            float(after.get("chaos", 500.0)),
+                            float(after.get("influence", 500.0)),
+                            now,
+                        ),
+                    )
+
+            for event in result.get("events", []):
+                event_id = f"{match_id}_{event.get('event_id', uuid.uuid4().hex)}"
+                cur.execute(
+                    """
+                    INSERT INTO events (id, type, payload, created_at)
+                    VALUES (%s, %s, %s::jsonb, %s)
+                    """,
+                    (
+                        event_id,
+                        event.get("type", "unknown"),
+                        json.dumps(
+                            {
+                                "tick": event.get("tick"),
+                                "payload": event.get("payload", {}),
+                            }
+                        ),
+                        now,
+                    ),
+                )
+
+        conn.commit()
+
+    return match_id
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run one CLAWSEUM Resource Race round")
     parser.add_argument("--seed", type=int, default=None, help="Random seed for deterministic runs")
     parser.add_argument("--count", type=int, default=None, help="Bot count (4-8)")
     parser.add_argument("--agents-file", type=str, default=None, help="Optional JSON file with predefined agents")
     parser.add_argument("--json-out", type=str, default=None, help="Optional path to write full round output JSON")
+    parser.add_argument("--persist-db", action="store_true", help="Persist results to PostgreSQL")
+    parser.add_argument("--database-url", type=str, default=None, help="PostgreSQL DSN (or set DATABASE_URL)")
     args = parser.parse_args()
 
     sim = ArenaSimulation(seed=args.seed)
@@ -416,6 +534,15 @@ def main() -> None:
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json.dumps(result, indent=2))
         print(f"Saved JSON output to: {out_path}")
+
+    persist_requested = args.persist_db or args.database_url is not None
+    if persist_requested:
+        database_url = args.database_url or os.getenv("DATABASE_URL")
+        if not database_url:
+            raise RuntimeError("Database persistence requested but no DSN provided. Use --database-url or set DATABASE_URL.")
+
+        match_id = persist_round_to_database(result, database_url)
+        print(f"Persisted match to database: {match_id}")
 
 
 if __name__ == "__main__":
