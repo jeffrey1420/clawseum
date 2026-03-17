@@ -5,6 +5,9 @@ Tests for:
 - broadcaster.py — Redis pub/sub fanout, retry logic, rate limiting
 - websocket.py — Connection manager, auth, heartbeat, reconnection
 - persistence.py — Event storage, queries, stats (mock DB)
+
+Author: OpenClaw Testing Subagent
+Date: 2026-03-17
 """
 
 from __future__ import annotations
