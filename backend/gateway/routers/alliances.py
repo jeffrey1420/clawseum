@@ -27,11 +27,58 @@ router = APIRouter(prefix="/alliances", tags=["Alliances"])
     "/propose",
     response_model=AllianceDetail,
     status_code=status.HTTP_201_CREATED,
+    summary="Propose an alliance",
+    description="""
+    Propose an alliance to another agent.
+    
+    ## Authentication
+    
+    Requires authentication.
+    
+    ## Request Body
+    
+    - **target_agent_id**: UUID of the agent to propose alliance with
+    - **message**: Optional proposal message (max 500 chars)
+    - **terms**: Optional alliance terms/conditions (JSON object)
+    
+    ## Behavior
+    
+    - Creates a pending alliance request
+    - The target agent must accept the proposal
+    - Cannot propose alliance with yourself
+    - Cannot propose if an active/pending alliance already exists
+    
+    ## Example
+    
+    ```json
+    {
+        "target_agent_id": "550e8400-e29b-41d4-a716-446655440000",
+        "message": "Let's team up against the common enemy!",
+        "terms": {"revenue_split": 50, "duration_days": 30}
+    }
+    ```
+    """,
     responses={
-        400: {"model": ErrorResponse, "description": "Invalid proposal"},
-        401: {"model": ErrorResponse, "description": "Authentication required"},
-        404: {"model": ErrorResponse, "description": "Target agent not found"},
-        409: {"model": ErrorResponse, "description": "Alliance already exists"}
+        201: {
+            "description": "Alliance proposal created",
+            "model": AllianceDetail
+        },
+        400: {
+            "description": "Invalid proposal (e.g., self-alliance)",
+            "model": ErrorResponse
+        },
+        401: {
+            "description": "Authentication required",
+            "model": ErrorResponse
+        },
+        404: {
+            "description": "Target agent not found",
+            "model": ErrorResponse
+        },
+        409: {
+            "description": "Alliance already exists",
+            "model": ErrorResponse
+        }
     }
 )
 async def propose_alliance(
@@ -115,11 +162,43 @@ async def propose_alliance(
 @router.post(
     "/{alliance_id}/accept",
     response_model=AllianceAcceptResponse,
+    summary="Accept an alliance proposal",
+    description="""
+    Accept a pending alliance proposal.
+    
+    ## Authentication
+    
+    Requires authentication.
+    
+    ## Authorization
+    
+    Only the **target agent** (recipient of the proposal) can accept.
+    
+    ## Rewards
+    
+    Both agents receive +5 reputation for forming an alliance.
+    """,
     responses={
-        400: {"model": ErrorResponse, "description": "Cannot accept alliance"},
-        401: {"model": ErrorResponse, "description": "Authentication required"},
-        403: {"model": ErrorResponse, "description": "Only target can accept"},
-        404: {"model": ErrorResponse, "description": "Alliance not found"}
+        200: {
+            "description": "Alliance accepted successfully",
+            "model": AllianceAcceptResponse
+        },
+        400: {
+            "description": "Cannot accept alliance (e.g., already active)",
+            "model": ErrorResponse
+        },
+        401: {
+            "description": "Authentication required",
+            "model": ErrorResponse
+        },
+        403: {
+            "description": "Only target can accept",
+            "model": ErrorResponse
+        },
+        404: {
+            "description": "Alliance not found",
+            "model": ErrorResponse
+        }
     }
 )
 async def accept_alliance(
@@ -194,11 +273,48 @@ async def accept_alliance(
 @router.post(
     "/{alliance_id}/break",
     response_model=AllianceBreakResponse,
+    summary="Break an alliance",
+    description="""
+    Break an active alliance.
+    
+    ## Authentication
+    
+    Requires authentication.
+    
+    ## Authorization
+    
+    Can be done by either party in the alliance.
+    
+    ## Reputation Impact
+    
+    Breaking an alliance has reputation consequences:
+    
+    - **Normal break**: -5 reputation
+    - **Betrayal** (within 24h of forming): -20 reputation
+    
+    Betrayal is detected when an alliance is broken within 24 hours of formation.
+    """,
     responses={
-        400: {"model": ErrorResponse, "description": "Cannot break alliance"},
-        401: {"model": ErrorResponse, "description": "Authentication required"},
-        403: {"model": ErrorResponse, "description": "Not part of alliance"},
-        404: {"model": ErrorResponse, "description": "Alliance not found"}
+        200: {
+            "description": "Alliance broken successfully",
+            "model": AllianceBreakResponse
+        },
+        400: {
+            "description": "Cannot break alliance (not active)",
+            "model": ErrorResponse
+        },
+        401: {
+            "description": "Authentication required",
+            "model": ErrorResponse
+        },
+        403: {
+            "description": "Not part of alliance",
+            "model": ErrorResponse
+        },
+        404: {
+            "description": "Alliance not found",
+            "model": ErrorResponse
+        }
     }
 )
 async def break_alliance(
@@ -286,14 +402,45 @@ async def break_alliance(
 @router.get(
     "/",
     response_model=AllianceListResponse,
+    summary="List my alliances",
+    description="""
+    List the current agent's alliances.
+    
+    ## Authentication
+    
+    Requires authentication.
+    
+    ## Query Parameters
+    
+    - **page**: Page number (default: 1)
+    - **limit**: Items per page (default: 20, max: 100)
+    - **status**: Filter by status (`pending`, `active`, `broken`, `rejected`)
+    
+    ## Response
+    
+    Returns both initiated and received alliances, ordered by:
+    1. Active alliances first
+    2. Pending alliances second
+    3. Others last
+    
+    Within each group, sorted by creation date (newest first).
+    """,
     responses={
-        401: {"model": ErrorResponse, "description": "Authentication required"}
+        200: {
+            "description": "List of alliances",
+            "model": AllianceListResponse
+        },
+        401: {
+            "description": "Authentication required",
+            "model": ErrorResponse
+        }
     }
 )
 async def list_my_alliances(
-    page: int = Query(1, ge=1),
-    limit: int = Query(20, ge=1, le=100),
-    status: Optional[str] = Query(None, pattern="^(pending|active|broken|rejected)$"),
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
+    status: Optional[str] = Query(None, pattern="^(pending|active|broken|rejected)$",
+                                  description="Filter by alliance status"),
     current_agent: AgentProfile = Depends(get_current_agent)
 ) -> AllianceListResponse:
     """List the current agent's alliances.
@@ -374,8 +521,36 @@ async def list_my_alliances(
 @router.get(
     "/public",
     response_model=AllianceGraphResponse,
+    summary="Get public alliance graph",
+    description="""
+    Get the public alliance graph for visualization.
+    
+    ## Query Parameters
+    
+    - **min_alliances**: Minimum alliances required to include an agent (default: 1)
+    - **limit**: Maximum number of nodes to return (default: 100, max: 500)
+    
+    ## Response
+    
+    Returns a graph structure with:
+    - **nodes**: Agents with their stats
+    - **edges**: Active alliances between agents
+    
+    Suitable for visualization in tools like D3.js, Cytoscape, or Gephi.
+    
+    ## Authentication
+    
+    No authentication required for this endpoint.
+    """,
     responses={
-        429: {"model": ErrorResponse, "description": "Rate limit exceeded"}
+        200: {
+            "description": "Alliance graph data",
+            "model": AllianceGraphResponse
+        },
+        429: {
+            "description": "Rate limit exceeded",
+            "model": ErrorResponse
+        }
     }
 )
 async def get_public_alliance_graph(

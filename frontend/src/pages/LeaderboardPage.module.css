@@ -1,0 +1,732 @@
+/* CLAWSEUM LeaderboardPage Styles */
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a0a0f 0%, #111118 100%);
+  color: #f3f4f6;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.logoIcon {
+  font-size: 1.5rem;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #aa3bff 0%, #7c3aed 50%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.navLink {
+  color: #9ca3af;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navLink:hover {
+  color: #f3f4f6;
+}
+
+.navLink.active {
+  color: #aa3bff;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main {
+  padding: 3rem 0 6rem;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ===== PAGE HEADER ===== */
+.pageHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.pageHeader h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #aa3bff 0%, #7c3aed 50%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pageHeader p {
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
+/* ===== AXIS TABS ===== */
+.axisTabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.axisTab {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.axisTab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.axisTab.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--axis-color);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--axis-color);
+}
+
+.axisIcon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+}
+
+.axisInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.axisName {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  text-transform: capitalize;
+}
+
+.axisDesc {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* ===== FILTERS ===== */
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.searchForm {
+  display: flex;
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem 0 0 0.5rem;
+  color: #f3f4f6;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.searchInput:focus {
+  border-color: #aa3bff;
+}
+
+.searchInput::placeholder {
+  color: #6b7280;
+}
+
+.searchButton {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: none;
+  border-radius: 0 0.5rem 0.5rem 0;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.searchButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.filterSelect {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #f3f4f6;
+  font-size: 0.875rem;
+  cursor: pointer;
+  outline: none;
+  min-width: 140px;
+}
+
+.filterSelect:focus {
+  border-color: #aa3bff;
+}
+
+.filterSelect option {
+  background: #1a1a24;
+}
+
+/* ===== ERROR MESSAGE ===== */
+.errorMessage {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.retryButton {
+  padding: 0.5rem 1rem;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 0.5rem;
+  color: #ef4444;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* ===== LEADERBOARD TABLE ===== */
+.leaderboardContainer {
+  background: linear-gradient(135deg, rgba(26, 26, 36, 0.8) 0%, rgba(17, 17, 24, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 80px 2fr 1.5fr 100px 80px 60px;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tableBody {
+  padding: 0.5rem 0;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 80px 2fr 1.5fr 100px 80px 60px;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.tableRow:hover {
+  background: rgba(255, 255, 255, 0.03);
+  border-left-color: var(--axis-color);
+}
+
+.colRank {
+  display: flex;
+  align-items: center;
+}
+
+.rankNumber {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #6b7280;
+}
+
+.rankBadge {
+  font-size: 1.5rem;
+}
+
+.colAgent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.agentAvatar {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+}
+
+.agentName {
+  font-weight: 600;
+  color: #f3f4f6;
+}
+
+.eliminatedBadge {
+  font-size: 0.625rem;
+  padding: 0.125rem 0.5rem;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-radius: 1rem;
+  margin-left: 0.5rem;
+}
+
+.colFaction {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.colScore {
+  font-family: var(--mono);
+  font-weight: 600;
+  color: #f3f4f6;
+}
+
+.winLoss {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.wins {
+  color: #22c55e;
+}
+
+.divider {
+  color: #4b5563;
+}
+
+.losses {
+  color: #ef4444;
+}
+
+.colChange {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.positive {
+  color: #22c55e;
+}
+
+.negative {
+  color: #ef4444;
+}
+
+.neutral {
+  color: #6b7280;
+}
+
+/* ===== LOADING & EMPTY STATES ===== */
+.loadingState {
+  padding: 1rem 0;
+}
+
+.skeletonRow {
+  height: 64px;
+  margin: 0.5rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.emptyState {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* ===== PAGINATION ===== */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.pageButton {
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #f3f4f6;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pageButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #aa3bff;
+}
+
+.pageButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.resultsInfo {
+  text-align: center;
+  margin-top: 1rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* ===== AGENT MODAL ===== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modalContent {
+  background: linear-gradient(135deg, #1a1a24 0%, #111118 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.5rem;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 2rem;
+}
+
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #9ca3af;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f3f4f6;
+}
+
+.modalLoading,
+.modalError {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.modalError {
+  color: #ef4444;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modalAvatar {
+  font-size: 3rem;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+}
+
+.modalTitle {
+  flex: 1;
+}
+
+.modalTitle h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  margin-bottom: 0.25rem;
+}
+
+.modalFaction {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+.statusBadge {
+  padding: 0.375rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statusBadge[data-status="active"] {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.statusBadge[data-status="eliminated"] {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.modalBio {
+  color: #9ca3af;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modalStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statBox {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.statBox .statValue {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f3f4f6;
+  font-family: var(--mono);
+}
+
+.statBox .statLabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+}
+
+.ranksSection h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin-bottom: 1rem;
+}
+
+.ranksGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.rankItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.5rem;
+  border-left: 3px solid var(--axis-color);
+}
+
+.rankIcon {
+  font-size: 1.25rem;
+}
+
+.rankName {
+  flex: 1;
+  font-size: 0.875rem;
+  color: #9ca3af;
+  text-transform: capitalize;
+}
+
+.rankValue {
+  font-weight: 700;
+  color: #f3f4f6;
+  font-family: var(--mono);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  color: #4b5563;
+  font-size: 0.875rem;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .headerContent {
+    padding: 1rem;
+  }
+  
+  .main {
+    padding: 2rem 0 4rem;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+  
+  .pageHeader h1 {
+    font-size: 1.75rem;
+  }
+  
+  .axisTabs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .axisDesc {
+    display: none;
+  }
+  
+  .filters {
+    flex-direction: column;
+  }
+  
+  .searchForm {
+    max-width: 100%;
+  }
+  
+  .tableHeader {
+    grid-template-columns: 50px 1.5fr 80px 60px;
+  }
+  
+  .tableHeader .colFaction,
+  .tableHeader .colWins {
+    display: none;
+  }
+  
+  .tableRow {
+    grid-template-columns: 50px 1.5fr 80px 60px;
+  }
+  
+  .colFaction,
+  .colWins {
+    display: none;
+  }
+  
+  .modalContent {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .modalStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .ranksGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .axisTabs {
+    grid-template-columns: 1fr;
+  }
+  
+  .pagination {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}

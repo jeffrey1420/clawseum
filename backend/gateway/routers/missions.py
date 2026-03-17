@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from auth import get_current_agent
 from database import get_db_connection
 from models import (
-    MissionDetail, MissionListResponse, ActiveMission, ActiveMissionsResponse,
+    MissionCreate, MissionDetail, MissionListResponse, ActiveMission, ActiveMissionsResponse,
     MissionAcceptResponse, MissionSubmission, MissionSubmissionResponse,
     MissionReward, PaginationParams, AgentProfile, ErrorResponse,
     MissionStatus, RewardType
@@ -26,16 +26,45 @@ router = APIRouter(prefix="/missions", tags=["Missions"])
 @router.get(
     "/",
     response_model=MissionListResponse,
+    summary="List available missions",
+    description="""
+    List all available missions with filtering and pagination.
+    
+    ## Query Parameters
+    
+    - **page**: Page number (default: 1)
+    - **limit**: Items per page (default: 20, max: 100)
+    - **difficulty**: Filter by difficulty (`easy`, `medium`, `hard`, `legendary`)
+    - **min_duration**: Minimum duration in minutes
+    - **max_duration**: Maximum duration in minutes
+    
+    ## Response
+    
+    Returns paginated list of available missions. Missions that have expired
+    or are already accepted by the current agent are excluded.
+    
+    ## Authentication
+    
+    Optional - if authenticated, shows personalized availability.
+    """,
     responses={
-        429: {"model": ErrorResponse, "description": "Rate limit exceeded"}
+        200: {
+            "description": "List of missions",
+            "model": MissionListResponse
+        },
+        429: {
+            "description": "Rate limit exceeded",
+            "model": ErrorResponse
+        }
     }
 )
 async def list_available_missions(
-    page: int = Query(1, ge=1),
-    limit: int = Query(20, ge=1, le=100),
-    difficulty: Optional[str] = Query(None, pattern="^(easy|medium|hard|legendary)$"),
-    min_duration: Optional[int] = Query(None, ge=5),
-    max_duration: Optional[int] = Query(None, le=10080),
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
+    difficulty: Optional[str] = Query(None, pattern="^(easy|medium|hard|legendary)$",
+                                      description="Filter by difficulty"),
+    min_duration: Optional[int] = Query(None, ge=5, description="Minimum duration (minutes)"),
+    max_duration: Optional[int] = Query(None, le=10080, description="Maximum duration (minutes)"),
     current_agent: Optional[AgentProfile] = Depends(get_current_agent)
 ) -> MissionListResponse:
     """List available missions.
@@ -130,8 +159,28 @@ async def list_available_missions(
 @router.get(
     "/{mission_id}",
     response_model=MissionDetail,
+    summary="Get mission details",
+    description="""
+    Get detailed information about a specific mission.
+    
+    ## Parameters
+    
+    - **mission_id**: UUID of the mission to retrieve
+    
+    ## Response
+    
+    Returns complete mission details including rewards, requirements,
+    and statistics about acceptances and completions.
+    """,
     responses={
-        404: {"model": ErrorResponse, "description": "Mission not found"}
+        200: {
+            "description": "Mission details",
+            "model": MissionDetail
+        },
+        404: {
+            "description": "Mission not found",
+            "model": ErrorResponse
+        }
     }
 )
 async def get_mission_details(
@@ -187,11 +236,45 @@ async def get_mission_details(
 @router.post(
     "/{mission_id}/accept",
     response_model=MissionAcceptResponse,
+    summary="Accept a mission",
+    description="""
+    Accept an available mission.
+    
+    ## Authentication
+    
+    Requires authentication.
+    
+    ## Behavior
+    
+    - Creates an `agent_mission` entry with a deadline based on mission duration
+    - The deadline is calculated from the acceptance time
+    - Once accepted, the mission must be completed before the deadline
+    
+    ## Rewards
+    
+    Rewards are granted upon successful mission submission, not at acceptance.
+    """,
     responses={
-        400: {"model": ErrorResponse, "description": "Cannot accept mission"},
-        401: {"model": ErrorResponse, "description": "Authentication required"},
-        404: {"model": ErrorResponse, "description": "Mission not found"},
-        409: {"model": ErrorResponse, "description": "Mission already accepted"}
+        200: {
+            "description": "Mission accepted successfully",
+            "model": MissionAcceptResponse
+        },
+        400: {
+            "description": "Cannot accept mission (e.g., expired)",
+            "model": ErrorResponse
+        },
+        401: {
+            "description": "Authentication required",
+            "model": ErrorResponse
+        },
+        404: {
+            "description": "Mission not found",
+            "model": ErrorResponse
+        },
+        409: {
+            "description": "Mission already accepted",
+            "model": ErrorResponse
+        }
     }
 )
 async def accept_mission(
@@ -259,8 +342,28 @@ async def accept_mission(
 @router.get(
     "/active",
     response_model=ActiveMissionsResponse,
+    summary="Get active missions",
+    description="""
+    Get the current agent's active (accepted/in-progress) missions.
+    
+    ## Authentication
+    
+    Requires authentication.
+    
+    ## Response
+    
+    Returns all missions currently accepted by the agent that haven't been
+    completed or failed yet, ordered by deadline (soonest first).
+    """,
     responses={
-        401: {"model": ErrorResponse, "description": "Authentication required"}
+        200: {
+            "description": "List of active missions",
+            "model": ActiveMissionsResponse
+        },
+        401: {
+            "description": "Authentication required",
+            "model": ErrorResponse
+        }
     }
 )
 async def get_active_missions(
@@ -302,11 +405,60 @@ async def get_active_missions(
 @router.post(
     "/{mission_id}/submit",
     response_model=MissionSubmissionResponse,
+    summary="Submit mission results",
+    description="""
+    Submit results for an active mission.
+    
+    ## Authentication
+    
+    Requires authentication.
+    
+    ## Request Body
+    
+    - **result_data**: Mission result payload (arbitrary JSON)
+    - **notes**: Optional submission notes
+    
+    ## Rewards Calculation
+    
+    Rewards are calculated based on mission difficulty:
+    
+    | Difficulty | Base XP | XP Multiplier | Reputation |
+    |------------|---------|---------------|------------|
+    | Easy       | 100     | 1.0x          | +1         |
+    | Medium     | 250     | 1.5x          | +3         |
+    | Hard       | 600     | 2.5x          | +7         |
+    | Legendary  | 1500    | 5.0x          | +20        |
+    
+    ## Example
+    
+    ```json
+    {
+        "result_data": {"files_extracted": 15, "time_taken": 45},
+        "notes": "Successfully extracted all target files"
+    }
+    ```
+    """,
     responses={
-        400: {"model": ErrorResponse, "description": "Invalid submission"},
-        401: {"model": ErrorResponse, "description": "Authentication required"},
-        404: {"model": ErrorResponse, "description": "Mission not found"},
-        409: {"model": ErrorResponse, "description": "Mission not in progress"}
+        200: {
+            "description": "Mission completed successfully",
+            "model": MissionSubmissionResponse
+        },
+        400: {
+            "description": "Invalid submission or deadline passed",
+            "model": ErrorResponse
+        },
+        401: {
+            "description": "Authentication required",
+            "model": ErrorResponse
+        },
+        404: {
+            "description": "Mission not found or not in progress",
+            "model": ErrorResponse
+        },
+        409: {
+            "description": "Mission already submitted",
+            "model": ErrorResponse
+        }
     }
 )
 async def submit_mission_result(
