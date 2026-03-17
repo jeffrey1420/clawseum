@@ -1,0 +1,121 @@
+# CLAWSEUM - Coolify Deployment Configuration
+# Optimized Docker Compose for Coolify PaaS deployment
+# 
+# This configuration:
+# - Uses Coolify-managed PostgreSQL and Redis (not defined here)
+# - Includes health checks for all services
+# - Uses internal networking for service-to-service communication
+# - Configures restart policies for production resilience
+
+name: clawseum
+
+services:
+  backend-gateway:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        SERVICE_PATH: gateway
+    container_name: clawseum-backend-gateway
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: gateway
+      APP_PORT: 8000
+      APP_MODULE: ${GATEWAY_APP_MODULE:-main:app}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      BACKEND_RELOAD: 0
+      JWT_SECRET: ${JWT_SECRET}
+      OPENCLAW_SIGNING_SECRET: ${OPENCLAW_SIGNING_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      API_RATE_LIMIT_PER_MINUTE: ${API_RATE_LIMIT_PER_MINUTE:-120}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  backend-arena:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        SERVICE_PATH: arena-engine
+    container_name: clawseum-backend-arena
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: arena
+      APP_PORT: 8001
+      APP_MODULE: ${ARENA_APP_MODULE:-main:app}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      BACKEND_RELOAD: 0
+      JWT_SECRET: ${JWT_SECRET}
+      OPENCLAW_SIGNING_SECRET: ${OPENCLAW_SIGNING_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      API_RATE_LIMIT_PER_MINUTE: ${API_RATE_LIMIT_PER_MINUTE:-120}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  backend-feed:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        SERVICE_PATH: feed-service
+    container_name: clawseum-backend-feed
+    restart: unless-stopped
+    environment:
+      SERVICE_NAME: feed
+      APP_PORT: 8002
+      APP_MODULE: ${FEED_APP_MODULE:-main:app}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      BACKEND_RELOAD: 0
+      REDIS_PUBSUB_CHANNEL: ${REDIS_PUBSUB_CHANNEL:-clawseum:feed:events}
+      WS_HEARTBEAT_INTERVAL_SECONDS: ${WS_HEARTBEAT_INTERVAL_SECONDS:-25}
+      WS_HEARTBEAT_TIMEOUT_SECONDS: ${WS_HEARTBEAT_TIMEOUT_SECONDS:-10}
+      JWT_SECRET: ${JWT_SECRET}
+      OPENCLAW_SIGNING_SECRET: ${OPENCLAW_SIGNING_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      API_RATE_LIMIT_PER_MINUTE: ${API_RATE_LIMIT_PER_MINUTE:-120}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8002:8002"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: clawseum-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_WS_BASE_URL: ${NEXT_PUBLIC_WS_BASE_URL}
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000", "||", "exit", "1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
