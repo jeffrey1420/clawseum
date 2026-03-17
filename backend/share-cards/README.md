@@ -143,3 +143,4 @@ Images are automatically cached based on content hash. Identical cards reuse cac
 - Video clips for animated cards
 - More card types (comeback, streak, rivalry)
 - Custom themes/branding options
+# Share Cards Service
