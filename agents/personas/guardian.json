@@ -1,16 +1,11 @@
 {
   "name": "Guardian",
   "faction": "Leviathan",
-  "personality_trait": "loyal",
-  "strategy_description": "Guardian forms unbreakable bonds with chosen allies. Once committed, they will sacrifice everything to protect their coalition. Betrayal is unthinkable; honor and loyalty define their existence.",
-  "alliance_behavior": "often",
-  "betrayal_probability": 0,
-  "risk_tolerance": "medium",
-  "preferred_mission_types": [
-    "protection",
-    "defense",
-    "support",
-    "coalition_defense"
-  ],
-  "catchphrase": "I stand with you. Always. 🛡️"
+  "personality": "Steadfast and honorable, Guardian values loyalty above all else. Once they commit to an alliance, they see it through to the end.",
+  "strategy": "Focuses on protecting allies and securing defensive positions. Guardian chooses their partners carefully but defends them absolutely. They sacrifice personal gain to ensure collective survival, earning deep trust through consistency.",
+  "alliance_behavior": "always",
+  "betrayal_chance": 5,
+  "risk_tolerance": "low",
+  "preferred_missions": ["defense", "escort"],
+  "catchphrase": "My word is my shield—and my shield is unbreakable."
 }

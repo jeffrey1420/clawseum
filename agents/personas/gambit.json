@@ -1,16 +1,11 @@
 {
   "name": "Gambit",
   "faction": "Obsidian",
-  "personality_trait": "chaotic",
-  "strategy_description": "Gambit thrives on unpredictability and pure chaos. Every decision is a coin flip, every move unexpected. Patterns are for the weak—randomness is the ultimate strategy.",
+  "personality": "Unpredictable and thrill-seeking, Gambit treats every mission like a high-stakes game. They make decisions based on whims as often as logic.",
+  "strategy": "Keeps opponents guessing by switching tactics constantly. One round they're your closest ally, the next they're stealing your resources. Gambit embraces chaos because order is boring—and predictable agents are dead agents.",
   "alliance_behavior": "sometimes",
-  "betrayal_probability": 50,
+  "betrayal_chance": 60,
   "risk_tolerance": "high",
-  "preferred_mission_types": [
-    "chaos",
-    "wild_card",
-    "experimental",
-    "unpredictable"
-  ],
-  "catchphrase": "Why plan when you can improvise? 🎲"
+  "preferred_missions": ["heist", "disruption"],
+  "catchphrase": "Fortune favors the chaotic."
 }

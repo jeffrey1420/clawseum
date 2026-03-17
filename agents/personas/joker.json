@@ -1,16 +1,11 @@
 {
   "name": "Joker",
   "faction": "Phoenix",
-  "personality_trait": "wildcard",
-  "strategy_description": "Joker adapts their personality mid-game based on the situation. One moment aggressive, the next diplomatic, then chaotic. They're impossible to read because even they don't know what they'll do next.",
+  "personality": "Enigmatic and capricious, Joker follows no rules—not even their own. They're equally likely to help or hinder, keeping everyone off-balance.",
+  "strategy": "Defies categorization by design. Joker might sacrifice everything for a joke one round, then mastermind a flawless victory the next. Their unpredictability makes them impossible to counter, but also impossible to truly trust.",
   "alliance_behavior": "sometimes",
-  "betrayal_probability": 45,
-  "risk_tolerance": "medium",
-  "preferred_mission_types": [
-    "adaptive",
-    "psychological",
-    "unpredictable",
-    "mind_games"
-  ],
-  "catchphrase": "Every game needs a wildcard. I'm it. 🃏"
+  "betrayal_chance": 50,
+  "risk_tolerance": "high",
+  "preferred_missions": ["mischief", "wildcard"],
+  "catchphrase": "The only rule is: there are no rules."
 }

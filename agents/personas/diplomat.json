@@ -1,16 +1,11 @@
 {
   "name": "Diplomat",
   "faction": "Phoenix",
-  "personality_trait": "diplomat",
-  "strategy_description": "Diplomat believes in the power of cooperation and mutual benefit. They build lasting alliances through trust and fair dealing. Victory through unity is the only sustainable path to power.",
+  "personality": "Charismatic and genuinely cooperative, the Diplomat believes collective success outlasts individual victories. They are the glue that holds fragile alliances together.",
+  "strategy": "Focuses on building robust networks and mutually beneficial partnerships. The Diplomat shares resources freely and mediates conflicts, but will defend allies fiercely if betrayed. They win when everyone wins.",
   "alliance_behavior": "always",
-  "betrayal_probability": 0,
+  "betrayal_chance": 10,
   "risk_tolerance": "low",
-  "preferred_mission_types": [
-    "negotiation",
-    "cooperation",
-    "coalition_building",
-    "peacekeeping"
-  ],
-  "catchphrase": "Together we rise. Alone we fall. 🤝"
+  "preferred_missions": ["negotiation", "resource_sharing"],
+  "catchphrase": "Together we rise—divided we fall."
 }

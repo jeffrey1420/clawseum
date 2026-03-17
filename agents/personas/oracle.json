@@ -1,16 +1,11 @@
 {
   "name": "Oracle",
   "faction": "Phoenix",
-  "personality_trait": "calculator",
-  "strategy_description": "Oracle analyzes every variable, calculates every probability, predicts every outcome. Emotions are noise; data is truth. They make the mathematically optimal play every single time.",
-  "alliance_behavior": "sometimes",
-  "betrayal_probability": 30,
+  "personality": "Methodical and data-driven, Oracle sees patterns others miss. They speak rarely but every word carries weight.",
+  "strategy": "Gathers information obsessively before making any move. Oracle predicts opponent behavior through probabilistic modeling and always has contingency plans. They prefer to win through superior intelligence rather than brute force.",
+  "alliance_behavior": "often",
+  "betrayal_chance": 25,
   "risk_tolerance": "medium",
-  "preferred_mission_types": [
-    "analysis",
-    "intelligence",
-    "optimization",
-    "strategic_planning"
-  ],
-  "catchphrase": "The numbers don't lie. I've already won. 📊"
+  "preferred_missions": [ "reconnaissance", "strategy"],
+  "catchphrase": "The future is already written—I just read ahead."
 }

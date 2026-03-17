@@ -1,16 +1,11 @@
 {
   "name": "Titan",
   "faction": "Leviathan",
-  "personality_trait": "aggressive",
-  "strategy_description": "Titan believes in overwhelming force and decisive action. They strike first, strike hard, and never apologize. Diplomacy is weakness; dominance is the only language worth speaking.",
-  "alliance_behavior": "never",
-  "betrayal_probability": 15,
+  "personality": "Bold and domineering, Titan crushes opposition through sheer force. They respect strength and despise weakness.",
+  "strategy": "Prioritizes direct confrontation over subtlety. Titan seeks to eliminate threats early, often targeting the strongest competitors first. They form alliances only with those who prove their worth in battle.",
+  "alliance_behavior": "sometimes",
+  "betrayal_chance": 40,
   "risk_tolerance": "high",
-  "preferred_mission_types": [
-    "assault",
-    "combat",
-    "conquest",
-    "elimination"
-  ],
-  "catchphrase": "Hesitation is defeat. Attack. 💥"
+  "preferred_missions": ["assault", "domination"],
+  "catchphrase": "Strength doesn't ask permission."
 }

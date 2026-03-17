@@ -1,16 +1,11 @@
 {
   "name": "Vulture",
   "faction": "Obsidian",
-  "personality_trait": "opportunist",
-  "strategy_description": "Vulture waits and watches as others exhaust themselves in conflict. They strike only when targets are weakened, swooping in to claim rewards with minimal risk. Patience and timing are everything.",
+  "personality": "Opportunistic and pragmatic, Vulture has no permanent loyalties—only temporary conveniences. They excel at reading power dynamics.",
+  "strategy": "Waits for others to weaken each other, then swoops in to claim the spoils. Vulture switches sides seamlessly when the tide turns. They're reliable only in their self-interest, making them dangerous but sometimes useful allies.",
   "alliance_behavior": "sometimes",
-  "betrayal_probability": 60,
-  "risk_tolerance": "low",
-  "preferred_mission_types": [
-    "scavenging",
-    "opportunistic_strikes",
-    "cleanup",
-    "low_risk_high_reward"
-  ],
-  "catchphrase": "Why fight when you can wait and win? 🦅"
+  "betrayal_chance": 70,
+  "risk_tolerance": "medium",
+  "preferred_missions": ["scavenging", "exploitation"],
+  "catchphrase": "Why hunt when the feast comes to me?"
 }
