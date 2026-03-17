@@ -12,6 +12,7 @@ import asyncio
 import heapq
 import json
 import logging
+import random
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Coroutine, Dict, List, Optional, Set, Tuple
@@ -20,6 +21,7 @@ from enum import Enum, auto
 from config import (
     MissionType,
     MatchConfig,
+    MissionConfig,
     AgentConfig,
     generate_match_id,
     DEFAULT_MATCH_TICKS,
