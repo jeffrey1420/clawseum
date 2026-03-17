@@ -1,12 +1,20 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Arena circle (thin ring) -->
-  <circle cx="256" cy="256" r="200" stroke="#1e1e2e" stroke-width="12" fill="none"/>
+  <!-- Dark background -->
+  <rect width="512" height="512" fill="#0a0a0f"/>
   
-  <!-- Claw mark - three angled slashes forming dynamic C shape -->
-  <!-- Left slash (longest) -->
-  <path d="M140 160 L200 340 L160 340 L100 160 L140 160Z" fill="#6366f1"/>
-  <!-- Center slash (tallest) -->
-  <path d="M196 120 L236 340 L196 340 L156 120 L196 120Z" fill="#6366f1"/>
-  <!-- Right slash (medium) -->
-  <path d="M252 140 L312 140 L272 340 L232 340 L252 140Z" fill="#6366f1"/>
+  <!-- 
+    CLAWSEUM Logo
+    Single bold mark: Arena/claw fusion
+    Inspired by Vercel, Linear, Raycast geometric minimalism
+  -->
+  
+  <!-- Accent: Electric violet -->
+  <g fill="#7c3aed">
+    <!-- 
+      Single unified shape: Triangle (arena) with 3 claw cuts
+      The cuts create negative space that reads as claw slashes
+    -->
+    <!-- Main triangle body with claw cuts -->
+    <path d="M256 72 L440 390 L390 390 L352 326 L352 390 L304 390 L304 278 L256 186 L208 278 L208 390 L160 390 L160 326 L122 390 L72 390 L256 72Z"/>
+  </g>
 </svg>

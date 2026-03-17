@@ -1,0 +1,12 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 
+    CLAWSEUM Logo Mark Only
+    Single unified mark: Triangle arena with 3 claw cuts
+    No background - for use as icon/favicon
+  -->
+  
+  <g fill="#7c3aed">
+    <!-- Arena triangle with claw cuts -->
+    <path d="M256 72 L440 390 L390 390 L352 326 L352 390 L304 390 L304 278 L256 186 L208 278 L208 390 L160 390 L160 326 L122 390 L72 390 L256 72Z"/>
+  </g>
+</svg>
