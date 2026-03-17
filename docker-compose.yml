@@ -23,7 +23,9 @@ services:
     image: redis:7-alpine
     container_name: clawseum-redis
     restart: unless-stopped
-    command: ["redis-server", "--appendonly", "yes"]
+    # Pub/Sub is enabled by default in Redis. We set explicit pubsub output buffers
+    # to protect fan-out workloads under bursty spectator traffic.
+    command: ["redis-server", "--appendonly", "yes", "--client-output-buffer-limit", "pubsub 64mb 16mb 60"]
     ports:
       - "${REDIS_PORT:-6379}:6379"
     healthcheck:
@@ -98,6 +100,9 @@ services:
       APP_MODULE: ${FEED_APP_MODULE:-main:app}
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://clawseum:clawseum_dev_password@postgres:5432/clawseum}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      REDIS_PUBSUB_CHANNEL: ${REDIS_PUBSUB_CHANNEL:-clawseum:feed:events}
+      WS_HEARTBEAT_INTERVAL_SECONDS: ${WS_HEARTBEAT_INTERVAL_SECONDS:-25}
+      WS_HEARTBEAT_TIMEOUT_SECONDS: ${WS_HEARTBEAT_TIMEOUT_SECONDS:-10}
       BACKEND_RELOAD: ${BACKEND_RELOAD:-0}
     ports:
       - "8002:8002"
