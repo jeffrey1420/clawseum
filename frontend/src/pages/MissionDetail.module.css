@@ -1,0 +1,735 @@
+.missionPage {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Header */
+.header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.logoIcon {
+  font-size: 1.5rem;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: 0.05em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navLink {
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: var(--accent);
+}
+
+/* Main Content */
+.main {
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.breadcrumb a {
+  color: var(--text);
+}
+
+.breadcrumb a:hover {
+  color: var(--accent);
+}
+
+.current {
+  color: var(--text-h);
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Cards */
+.infoCard,
+.opponentCard,
+.rulesCard,
+.rewardsCard,
+.actionCard,
+.liveMatchCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.infoCard {
+  grid-column: span 2;
+}
+
+.liveMatchCard {
+  grid-column: span 2;
+}
+
+/* Mission Type Badge */
+.missionTypeBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid;
+  margin-bottom: 1rem;
+}
+
+.missionTypeBadge span {
+  font-size: 1rem;
+}
+
+/* Mission Name & Description */
+.missionName {
+  font-size: 1.75rem;
+  color: var(--text-h);
+  margin-bottom: 0.75rem;
+}
+
+.missionDescription {
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* Status Section */
+.statusSection {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.statusLabel {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusBadge.active {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+}
+
+.statusBadge.pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.statusBadge.completed {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--info);
+}
+
+.statusBadge.cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.viewerCount {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Opponent Card */
+.opponentCard h2,
+.rulesCard h2,
+.rewardsCard h2,
+.liveMatchCard h2 {
+  font-size: 1rem;
+  color: var(--text-h);
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.opponentInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.opponentAvatar {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  border: 2px solid var(--border);
+}
+
+.opponentDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.opponentDetails h3 {
+  color: var(--text-h);
+  font-size: 1.125rem;
+}
+
+.opponentFaction {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.opponentRank {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Rules Card */
+.rulesList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rulesList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.ruleNumber {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Rewards Card */
+.rewardsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rewardItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.rewardIcon {
+  font-size: 1.25rem;
+}
+
+.rewardInfo {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rewardLabel {
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.rewardValue {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--success);
+}
+
+/* Action Card */
+.actionCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.actionInfo {
+  text-align: center;
+}
+
+.timeRemaining {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.timeRemaining span:first-child {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.timeValue {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-h);
+  font-family: var(--mono);
+}
+
+.acceptButton,
+.resultsButton {
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.acceptButton {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+  color: white;
+}
+
+.acceptButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(170, 59, 255, 0.3);
+}
+
+.resultsButton {
+  background: var(--accent);
+  color: white;
+}
+
+.resultsButton:hover {
+  background: var(--accent-secondary);
+}
+
+.actionHint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid var(--success);
+  border-radius: 8px;
+  color: var(--success);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.livePulse {
+  animation: pulse 1s infinite;
+}
+
+.cancelledMessage {
+  text-align: center;
+  color: var(--danger);
+  font-weight: 500;
+}
+
+/* Live Match Card */
+.matchFeed {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.matchEvent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.eventTime {
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  min-width: 45px;
+}
+
+.eventActor {
+  font-weight: 600;
+  color: var(--text-h);
+  min-width: 80px;
+}
+
+.eventAction {
+  flex: 1;
+  color: var(--text);
+}
+
+.eventResult {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Loading & Error States */
+.loading,
+.error {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.spinner {
+  font-size: 3rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.errorIcon {
+  font-size: 4rem;
+}
+
+.error h1 {
+  color: var(--text-h);
+}
+
+.error p {
+  color: var(--text-muted);
+  max-width: 400px;
+}
+
+.backButton {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.backButton:hover {
+  background: var(--border);
+  color: var(--text-h);
+}
+
+/* Results Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.modalHeader h2 {
+  font-size: 1.25rem;
+  color: var(--text-h);
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.closeButton:hover {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: white;
+}
+
+.modalContent {
+  padding: 1.5rem;
+}
+
+.winnerAnnouncement {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(170, 59, 255, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+  border: 1px solid var(--accent);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.winnerAvatar {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: var(--bg);
+  border-radius: 12px;
+}
+
+.winnerInfo h3 {
+  color: var(--text-h);
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.winnerInfo p {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.resultsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.resultItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.resultItem span:first-child {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.resultItem span:last-child {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.highlight {
+  color: var(--accent) !important;
+}
+
+.positive {
+  color: var(--success) !important;
+}
+
+.highlights {
+  margin-bottom: 1.5rem;
+}
+
+.highlights h4 {
+  font-size: 0.875rem;
+  color: var(--text-h);
+  margin-bottom: 0.75rem;
+}
+
+.highlights ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.highlights li {
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.modalButton {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.modalButton:hover {
+  background: var(--accent-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .headerContainer {
+    padding: 1rem;
+  }
+
+  .nav {
+    gap: 1rem;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .infoCard,
+  .liveMatchCard {
+    grid-column: span 1;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .missionName {
+    font-size: 1.25rem;
+  }
+
+  .resultsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .matchEvent {
+    flex-wrap: wrap;
+  }
+
+  .eventAction {
+    width: 100%;
+    margin-top: 0.25rem;
+  }
+}

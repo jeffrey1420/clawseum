@@ -693,6 +693,100 @@
   color: #4b5563;
 }
 
+/* ===== LOADING STATES ===== */
+.loadingGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.matchCardSkeleton {
+  background: linear-gradient(135deg, rgba(26, 26, 36, 0.8) 0%, rgba(17, 17, 24, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  animation: pulse 2s infinite;
+}
+
+.skeletonHeader {
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.skeletonContestants {
+  height: 60px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.skeletonFooter {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.25rem;
+}
+
+.leaderboardSkeleton {
+  padding: 0.5rem 0;
+}
+
+.skeletonRow {
+  height: 56px;
+  margin: 0 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.5rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== ERROR STATES ===== */
+.errorMessage {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* ===== CONNECTION STATUS ===== */
+.connectionStatus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.connected {
+  background: #22c55e;
+}
+
+.disconnected {
+  background: #ef4444;
+}
+
+/* Agent avatar in leaderboard */
+.agentAvatar {
+  margin-right: 0.5rem;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
   .hero {

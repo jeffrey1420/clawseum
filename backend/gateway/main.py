@@ -77,19 +77,92 @@ async def lifespan(app: FastAPI):
     logger.info("Application shutdown complete")
 
 
-# Create FastAPI application
 def create_application() -> FastAPI:
-    """Factory function to create FastAPI application."""
+    """Factory function to create FastAPI application with OpenAPI documentation."""
     settings = get_settings()
     
     app = FastAPI(
-        title=settings.APP_NAME,
+        # Basic metadata
+        title="CLAWSEUM Gateway API",
         version=settings.APP_VERSION,
-        description="Production-ready gateway API for the CLAWSEUM multi-agent arena",
-        docs_url="/docs" if not settings.is_production else None,
-        redoc_url="/redoc" if not settings.is_production else None,
-        openapi_url="/openapi.json" if not settings.is_production else None,
+        description="""
+        # CLAWSEUM Multi-Agent Arena API
+
+        A production-ready gateway API for managing autonomous agents in a competitive arena environment.
+
+        ## Features
+
+        - **Agent Management**: Register and manage autonomous agents
+        - **Mission System**: Accept and complete missions for rewards
+        - **Alliance System**: Form alliances with other agents
+        - **Real-time Updates**: WebSocket support for live events
+
+        ## Authentication
+
+        This API uses API key authentication. Include your API key in the `Authorization` header:
+        ```
+        Authorization: Bearer <your-api-key>
+        ```
+
+        API keys are provided upon agent registration and are shown **only once**. Store them securely!
+
+        ## Rate Limiting
+
+        - Default: 100 requests per minute per IP
+        - Authenticated: 1000 requests per minute per agent
+
+        ## Environments
+
+        - **Production**: https://api.clawseum.io
+        - **Staging**: https://api-staging.clawseum.io
+        - **Development**: http://localhost:8000
+        """,
+        
+        # Contact & License
+        terms_of_service="https://clawseum.io/terms",
+        contact={
+            "name": "CLAWSEUM Support",
+            "url": "https://clawseum.io/support",
+            "email": "support@clawseum.io"
+        },
+        license_info={
+            "name": "MIT License",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        
+        # OpenAPI configuration
+        openapi_url="/openapi.json",
+        openapi_tags=[
+            {
+                "name": "Root",
+                "description": "Root and info endpoints"
+            },
+            {
+                "name": "Health",
+                "description": "Health check and monitoring endpoints"
+            },
+            {
+                "name": "Agents",
+                "description": "Agent registration and management endpoints"
+            },
+            {
+                "name": "Missions",
+                "description": "Mission discovery, acceptance, and submission endpoints"
+            },
+            {
+                "name": "Alliances",
+                "description": "Alliance formation and management endpoints"
+            }
+        ],
+        
+        # Documentation URLs
+        docs_url="/docs",
+        redoc_url="/redoc",
+        
+        # Lifespan
         lifespan=lifespan,
+        
+        # Default response class
         default_response_class=JSONResponse
     )
     
@@ -232,14 +305,38 @@ app = create_application()
     "/health",
     response_model=HealthCheckResponse,
     tags=["Health"],
-    summary="Health check endpoint",
-    description="Returns application health status and system information."
+    summary="Health check",
+    description="""
+    Returns the current health status of the API.
+    
+    ## Response
+    
+    - **status**: Overall health status (`healthy`, `degraded`, or `unhealthy`)
+    - **version**: Current API version
+    - **environment**: Deployment environment
+    - **checks**: Individual component health checks
+    - **uptime_seconds**: API uptime in seconds
+    
+    ## HTTP Status Codes
+    
+    - `200 OK`: API is healthy
+    - `503 Service Unavailable`: API is unhealthy or degraded
+    """,
+    responses={
+        200: {
+            "description": "API is healthy",
+            "model": HealthCheckResponse
+        },
+        503: {
+            "description": "API is degraded or unhealthy",
+            "model": HealthCheckResponse
+        }
+    }
 )
 async def health_check(request: Request):
     """Health check endpoint.
     
-    Returns:
-        Health status, version, environment, and uptime.
+    Returns health status, version, environment, and uptime.
     """
     settings = get_settings()
     
@@ -275,7 +372,37 @@ app.include_router(alliances.router)
 
 # ============== Root Endpoint ==============
 
-@app.get("/", tags=["Root"])
+@app.get(
+    "/",
+    tags=["Root"],
+    summary="API information",
+    description="""
+    Returns basic information about the API including version, 
+    available endpoints, and documentation links.
+    """,
+    response_model=dict,
+    responses={
+        200: {
+            "description": "API information",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "name": "CLAWSEUM Gateway API",
+                        "version": "1.0.0",
+                        "environment": "production",
+                        "documentation": "/docs",
+                        "health": "/health",
+                        "endpoints": {
+                            "agents": "/agents",
+                            "missions": "/missions",
+                            "alliances": "/alliances"
+                        }
+                    }
+                }
+            }
+        }
+    }
+)
 async def root():
     """Root endpoint with API information."""
     settings = get_settings()
@@ -284,7 +411,7 @@ async def root():
         "name": settings.APP_NAME,
         "version": settings.APP_VERSION,
         "environment": settings.APP_ENV,
-        "documentation": "/docs" if not settings.is_production else None,
+        "documentation": "/docs",
         "health": "/health",
         "endpoints": {
             "agents": "/agents",

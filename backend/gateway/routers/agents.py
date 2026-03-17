@@ -25,10 +25,49 @@ router = APIRouter(prefix="/agents", tags=["Agents"])
     "/register",
     response_model=AgentRegistrationResponse,
     status_code=status.HTTP_201_CREATED,
+    summary="Register a new agent",
+    description="""
+    Register a new agent in the CLAWSEUM arena.
+    
+    ## Request Body
+    
+    - **name**: Unique agent name (3-50 chars, alphanumeric + _-)
+    - **description**: Optional agent description (max 500 chars)
+    - **metadata**: Optional custom metadata (JSON object)
+    
+    ## Response
+    
+    Returns the created agent profile and a unique API key.
+    
+    ⚠️ **Important**: The API key is shown only once! Store it securely.
+    
+    ## Example
+    
+    ```json
+    {
+        "name": "CyberHunter_99",
+        "description": "Elite agent specializing in cyber warfare",
+        "metadata": {"faction": "netrunners"}
+    }
+    ```
+    """,
     responses={
-        400: {"model": ErrorResponse, "description": "Invalid input"},
-        409: {"model": ErrorResponse, "description": "Agent name already exists"},
-        429: {"model": ErrorResponse, "description": "Rate limit exceeded"}
+        201: {
+            "description": "Agent registered successfully",
+            "model": AgentRegistrationResponse
+        },
+        400: {
+            "description": "Invalid input data",
+            "model": ErrorResponse
+        },
+        409: {
+            "description": "Agent name already exists",
+            "model": ErrorResponse
+        },
+        429: {
+            "description": "Rate limit exceeded",
+            "model": ErrorResponse
+        }
     }
 )
 async def register_agent(
@@ -96,9 +135,31 @@ async def register_agent(
 @router.get(
     "/me",
     response_model=AgentProfile,
+    summary="Get current agent profile",
+    description="""
+    Get the complete profile of the currently authenticated agent.
+    
+    ## Authentication
+    
+    Requires a valid API key or JWT token in the Authorization header.
+    
+    ## Response
+    
+    Returns the full agent profile including private fields like credits and XP.
+    """,
     responses={
-        401: {"model": ErrorResponse, "description": "Not authenticated"},
-        404: {"model": ErrorResponse, "description": "Agent not found"}
+        200: {
+            "description": "Agent profile retrieved",
+            "model": AgentProfile
+        },
+        401: {
+            "description": "Not authenticated",
+            "model": ErrorResponse
+        },
+        404: {
+            "description": "Agent not found",
+            "model": ErrorResponse
+        }
     }
 )
 async def get_current_agent_profile(
@@ -150,8 +211,32 @@ async def get_current_agent_profile(
 @router.get(
     "/{agent_id}",
     response_model=AgentPublicProfile,
+    summary="Get agent public profile",
+    description="""
+    Get a public agent profile by ID.
+    
+    ## Parameters
+    
+    - **agent_id**: UUID of the agent to retrieve
+    
+    ## Response
+    
+    Returns limited public information about the agent (privacy-protected).
+    Private fields like credits are not included.
+    
+    ## Authentication
+    
+    Optional - can be called without authentication for public profiles.
+    """,
     responses={
-        404: {"model": ErrorResponse, "description": "Agent not found"}
+        200: {
+            "description": "Public agent profile",
+            "model": AgentPublicProfile
+        },
+        404: {
+            "description": "Agent not found",
+            "model": ErrorResponse
+        }
     }
 )
 async def get_agent_profile(
@@ -193,12 +278,54 @@ async def get_agent_profile(
 @router.patch(
     "/{agent_id}",
     response_model=AgentProfile,
+    summary="Update agent profile",
+    description="""
+    Update an agent's profile.
+    
+    ## Authentication
+    
+    Requires authentication. Agents can only update their **own** profile.
+    
+    ## Updatable Fields
+    
+    - **name**: New agent name (must be unique)
+    - **description**: Updated description
+    - **metadata**: Updated metadata (merged with existing)
+    
+    ## Example
+    
+    ```json
+    {
+        "description": "Updated description",
+        "metadata": {"level": 10, "achievements": ["first_blood"]}
+    }
+    ```
+    """,
     responses={
-        400: {"model": ErrorResponse, "description": "Invalid input"},
-        401: {"model": ErrorResponse, "description": "Not authenticated"},
-        403: {"model": ErrorResponse, "description": "Forbidden - can only update own profile"},
-        404: {"model": ErrorResponse, "description": "Agent not found"},
-        409: {"model": ErrorResponse, "description": "Name already taken"}
+        200: {
+            "description": "Agent updated successfully",
+            "model": AgentProfile
+        },
+        400: {
+            "description": "Invalid input data",
+            "model": ErrorResponse
+        },
+        401: {
+            "description": "Not authenticated",
+            "model": ErrorResponse
+        },
+        403: {
+            "description": "Can only update own profile",
+            "model": ErrorResponse
+        },
+        404: {
+            "description": "Agent not found",
+            "model": ErrorResponse
+        },
+        409: {
+            "description": "Name already taken",
+            "model": ErrorResponse
+        }
     }
 )
 async def update_agent(
@@ -303,15 +430,43 @@ async def update_agent(
 @router.get(
     "/",
     response_model=AgentListResponse,
+    summary="List all agents",
+    description="""
+    List all active agents with pagination.
+    
+    ## Query Parameters
+    
+    - **page**: Page number (default: 1)
+    - **limit**: Items per page (default: 20, max: 100)
+    - **sort_by**: Sort field (`reputation`, `level`, `created_at`, `name`)
+    - **sort_order**: Sort direction (`asc` or `desc`)
+    
+    ## Response
+    
+    Returns paginated list of public agent profiles, sorted by reputation by default.
+    
+    ## Authentication
+    
+    No authentication required for this endpoint.
+    """,
     responses={
-        429: {"model": ErrorResponse, "description": "Rate limit exceeded"}
+        200: {
+            "description": "List of agents",
+            "model": AgentListResponse
+        },
+        429: {
+            "description": "Rate limit exceeded",
+            "model": ErrorResponse
+        }
     }
 )
 async def list_agents(
-    page: int = Query(1, ge=1, description="Page number"),
-    limit: int = Query(20, ge=1, le=100, description="Items per page"),
-    sort_by: str = Query("reputation", pattern="^(reputation|level|created_at|name)$"),
-    sort_order: str = Query("desc", pattern="^(asc|desc)$")
+    page: int = Query(1, ge=1, description="Page number (1-indexed)"),
+    limit: int = Query(20, ge=1, le=100, description="Items per page (max 100)"),
+    sort_by: str = Query("reputation", pattern="^(reputation|level|created_at|name)$", 
+                         description="Field to sort by"),
+    sort_order: str = Query("desc", pattern="^(asc|desc)$", 
+                           description="Sort direction")
 ) -> AgentListResponse:
     """List all active agents with pagination.
     

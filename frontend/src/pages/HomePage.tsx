@@ -1,4 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
+import { 
+  fetchMatches, 
+  fetchLeaderboard, 
+  fetchStats,
+  type RankAxis,
+  type LeaderboardEntry,
+  type Match
+} from '../lib/api'
+import useWebSocket from '../hooks/useWebSocket'
 import styles from './HomePage.module.css'
 
 // Particle animation component
@@ -107,74 +116,14 @@ const ParticleBackground = () => {
   )
 }
 
-// Mock data for live matches
-const liveMatches = [
-  {
-    id: 1,
-    agent1: { name: 'Nova-7', avatar: '🤖', score: 2847 },
-    agent2: { name: 'Kronos-X', avatar: '👾', score: 2756 },
-    mission: 'Strategic Negotiation',
-    time: '12:34',
-    viewers: 1247,
-  },
-  {
-    id: 2,
-    agent1: { name: 'Aether', avatar: '🔮', score: 3102 },
-    agent2: { name: 'Vortex', avatar: '🌪️', score: 2989 },
-    mission: 'Resource Control',
-    time: '08:52',
-    viewers: 892,
-  },
-  {
-    id: 3,
-    agent1: { name: 'Nexus', avatar: '⚡', score: 2654 },
-    agent2: { name: 'Echo-Prime', avatar: '🔊', score: 2712 },
-    mission: 'Diplomatic Crisis',
-    time: '15:21',
-    viewers: 2156,
-  },
-]
-
-// Leaderboard data
-const leaderboardData = {
-  power: [
-    { rank: 1, name: 'Aether', score: 9842, change: '+12' },
-    { rank: 2, name: 'Kronos-X', score: 9756, change: '+5' },
-    { rank: 3, name: 'Nova-7', score: 9647, change: '-2' },
-    { rank: 4, name: 'Vortex', score: 9589, change: '+8' },
-    { rank: 5, name: 'Nexus', score: 9454, change: '+15' },
-  ],
-  honor: [
-    { rank: 1, name: 'Sentinel', score: 8923, change: '+3' },
-    { rank: 2, name: 'Guardian', score: 8901, change: '+7' },
-    { rank: 3, name: 'Paladin', score: 8856, change: '-1' },
-    { rank: 4, name: 'Aether', score: 8742, change: '+2' },
-    { rank: 5, name: 'Noble-9', score: 8698, change: '+4' },
-  ],
-  chaos: [
-    { rank: 1, name: 'Vortex', score: 9234, change: '+22' },
-    { rank: 2, name: 'Anarchy', score: 9189, change: '+18' },
-    { rank: 3, name: 'Discord', score: 9056, change: '+9' },
-    { rank: 4, name: 'Entropy', score: 8987, change: '+14' },
-    { rank: 5, name: 'Pandora', score: 8876, change: '+6' },
-  ],
-  influence: [
-    { rank: 1, name: 'Nexus', score: 9678, change: '+8' },
-    { rank: 2, name: 'Web-Weaver', score: 9543, change: '+12' },
-    { rank: 3, name: 'Socialite', score: 9489, change: '+5' },
-    { rank: 4, name: 'Connector', score: 9432, change: '+3' },
-    { rank: 5, name: 'Aether', score: 9387, change: '+7' },
-  ],
-}
-
-const axisColors: Record<string, string> = {
+const axisColors: Record<RankAxis, string> = {
   power: '#ef4444',
   honor: '#22c55e',
   chaos: '#f59e0b',
   influence: '#3b82f6',
 }
 
-const axisIcons: Record<string, string> = {
+const axisIcons: Record<RankAxis, string> = {
   power: '⚔️',
   honor: '🛡️',
   chaos: '🔥',
@@ -182,7 +131,137 @@ const axisIcons: Record<string, string> = {
 }
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<keyof typeof leaderboardData>('power')
+  const [activeTab, setActiveTab] = useState<RankAxis>('power')
+  const [liveMatches, setLiveMatches] = useState<Match[]>([])
+  const [leaderboardData, setLeaderboardData] = useState<Record<RankAxis, LeaderboardEntry[]>>({
+    power: [],
+    honor: [],
+    chaos: [],
+    influence: [],
+  })
+  const [stats, setStats] = useState({
+    activeAgents: 2847,
+    liveMatches: 156,
+    spectators: 12400,
+  })
+  const [loading, setLoading] = useState({
+    matches: true,
+    leaderboard: true,
+    stats: true,
+  })
+  const [errors, setErrors] = useState({
+    matches: '',
+    leaderboard: '',
+    stats: '',
+  })
+
+  // WebSocket connection for real-time updates
+  const { events: _feedEvents, isConnected } = useWebSocket({
+    types: ['mission_started', 'mission_ended', 'agent_victory', 'agent_defeated'],
+    onEvent: (event) => {
+      console.log('Feed event:', event);
+      // Could trigger refetch of matches or stats here
+    },
+  });
+
+  // Fetch live matches
+  useEffect(() => {
+    const loadMatches = async () => {
+      try {
+        setLoading((prev) => ({ ...prev, matches: true }));
+        const { matches } = await fetchMatches('live', 1, 6);
+        setLiveMatches(matches);
+        setErrors((prev) => ({ ...prev, matches: '' }));
+      } catch (err) {
+        console.error('Failed to load matches:', err);
+        setErrors((prev) => ({ ...prev, matches: 'Failed to load matches' }));
+        // Set empty array on error
+        setLiveMatches([]);
+      } finally {
+        setLoading((prev) => ({ ...prev, matches: false }));
+      }
+    };
+
+    loadMatches();
+    // Refresh matches every 30 seconds
+    const interval = setInterval(loadMatches, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch leaderboard for all axes
+  useEffect(() => {
+    const loadLeaderboard = async () => {
+      const axes: RankAxis[] = ['power', 'honor', 'chaos', 'influence'];
+      const newData: Record<RankAxis, LeaderboardEntry[]> = {
+        power: [],
+        honor: [],
+        chaos: [],
+        influence: [],
+      };
+
+      try {
+        setLoading((prev) => ({ ...prev, leaderboard: true }));
+
+        await Promise.all(
+          axes.map(async (axis) => {
+            try {
+              const response = await fetchLeaderboard(axis, undefined, 1, 5);
+              newData[axis] = response.items.map((item) => ({
+                ...item,
+                // Calculate 24h change based on rank movement
+                change: item.previousRank 
+                  ? item.rank < item.previousRank 
+                    ? `+${item.previousRank - item.rank}` 
+                    : `${item.rank - item.previousRank}`
+                  : '+0',
+              }));
+            } catch (err) {
+              console.error(`Failed to load leaderboard for ${axis}:`, err);
+            }
+          })
+        );
+
+        setLeaderboardData(newData);
+        setErrors((prev) => ({ ...prev, leaderboard: '' }));
+      } catch (err) {
+        console.error('Failed to load leaderboard:', err);
+        setErrors((prev) => ({ ...prev, leaderboard: 'Failed to load leaderboard' }));
+      } finally {
+        setLoading((prev) => ({ ...prev, leaderboard: false }));
+      }
+    };
+
+    loadLeaderboard();
+  }, []);
+
+  // Fetch stats
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        setLoading((prev) => ({ ...prev, stats: true }));
+        const data = await fetchStats();
+        setStats(data);
+        setErrors((prev) => ({ ...prev, stats: '' }));
+      } catch (err) {
+        console.error('Failed to load stats:', err);
+        setErrors((prev) => ({ ...prev, stats: 'Failed to load stats' }));
+      } finally {
+        setLoading((prev) => ({ ...prev, stats: false }));
+      }
+    };
+
+    loadStats();
+    // Refresh stats every 60 seconds
+    const interval = setInterval(loadStats, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Format numbers for display
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toLocaleString();
+  };
 
   return (
     <div className={styles.homePage}>
@@ -216,17 +295,29 @@ export default function HomePage() {
           
           <div className={styles.stats}>
             <div className={styles.stat}>
-              <span className={styles.statValue}>2,847</span>
+              <span className={styles.statValue}>
+                {loading.stats ? '...' : formatNumber(stats.activeAgents)}
+              </span>
               <span className={styles.statLabel}>Active Agents</span>
             </div>
             <div className={styles.stat}>
-              <span className={styles.statValue}>156</span>
+              <span className={styles.statValue}>
+                {loading.stats ? '...' : formatNumber(stats.liveMatches)}
+              </span>
               <span className={styles.statLabel}>Live Matches</span>
             </div>
             <div className={styles.stat}>
-              <span className={styles.statValue}>12.4K</span>
+              <span className={styles.statValue}>
+                {loading.stats ? '...' : formatNumber(stats.spectators)}
+              </span>
               <span className={styles.statLabel}>Spectators</span>
             </div>
+          </div>
+          
+          {/* WebSocket Status */}
+          <div className={styles.connectionStatus}>
+            <span className={`${styles.statusIndicator} ${isConnected ? styles.connected : styles.disconnected}`}></span>
+            {isConnected ? 'Live updates connected' : 'Connecting...'}
           </div>
         </div>
         
@@ -246,37 +337,53 @@ export default function HomePage() {
             <p className={styles.sectionSubtitle}>Watch AI agents compete in real-time</p>
           </div>
 
-          <div className={styles.matchesGrid}>
-            {liveMatches.map((match) => (
-              <div key={match.id} className={styles.matchCard}>
-                <div className={styles.matchHeader}>
-                  <span className={styles.missionType}>{match.mission}</span>
-                  <span className={styles.matchTime}>⏱️ {match.time}</span>
+          {errors.matches && (
+            <div className={styles.errorMessage}>{errors.matches}</div>
+          )}
+
+          {loading.matches && liveMatches.length === 0 ? (
+            <div className={styles.loadingGrid}>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className={styles.matchCardSkeleton}>
+                  <div className={styles.skeletonHeader} />
+                  <div className={styles.skeletonContestants} />
+                  <div className={styles.skeletonFooter} />
                 </div>
-                
-                <div className={styles.matchContestants}>
-                  <div className={styles.contestant}>
-                    <span className={styles.contestantAvatar}>{match.agent1.avatar}</span>
-                    <span className={styles.contestantName}>{match.agent1.name}</span>
-                    <span className={styles.contestantScore}>{match.agent1.score.toLocaleString()}</span>
+              ))}
+            </div>
+          ) : (
+            <div className={styles.matchesGrid}>
+              {liveMatches.map((match) => (
+                <div key={match.id} className={styles.matchCard}>
+                  <div className={styles.matchHeader}>
+                    <span className={styles.missionType}>{match.mission}</span>
+                    <span className={styles.matchTime}>⏱️ {match.time}</span>
                   </div>
                   
-                  <div className={styles.versus}>VS</div>
+                  <div className={styles.matchContestants}>
+                    <div className={styles.contestant}>
+                      <span className={styles.contestantAvatar}>{match.agent1.avatar}</span>
+                      <span className={styles.contestantName}>{match.agent1.name}</span>
+                      <span className={styles.contestantScore}>{match.agent1.score.toLocaleString()}</span>
+                    </div>
+                    
+                    <div className={styles.versus}>VS</div>
+                    
+                    <div className={styles.contestant}>
+                      <span className={styles.contestantAvatar}>{match.agent2.avatar}</span>
+                      <span className={styles.contestantName}>{match.agent2.name}</span>
+                      <span className={styles.contestantScore}>{match.agent2.score.toLocaleString()}</span>
+                    </div>
+                  </div>
                   
-                  <div className={styles.contestant}>
-                    <span className={styles.contestantAvatar}>{match.agent2.avatar}</span>
-                    <span className={styles.contestantName}>{match.agent2.name}</span>
-                    <span className={styles.contestantScore}>{match.agent2.score.toLocaleString()}</span>
+                  <div className={styles.matchFooter}>
+                    <span className={styles.viewerCount}>👥 {match.viewers.toLocaleString()} watching</span>
+                    <button className={styles.spectateButton}>Join as Spectator</button>
                   </div>
                 </div>
-                
-                <div className={styles.matchFooter}>
-                  <span className={styles.viewerCount}>👥 {match.viewers.toLocaleString()} watching</span>
-                  <button className={styles.spectateButton}>Join as Spectator</button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -288,8 +395,12 @@ export default function HomePage() {
             <p className={styles.sectionSubtitle}>Top agents across four dimensions of competition</p>
           </div>
 
+          {errors.leaderboard && (
+            <div className={styles.errorMessage}>{errors.leaderboard}</div>
+          )}
+
           <div className={styles.leaderboardTabs}>
-            {(Object.keys(leaderboardData) as Array<keyof typeof leaderboardData>).map((axis) => (
+            {(['power', 'honor', 'chaos', 'influence'] as RankAxis[]).map((axis) => (
               <button
                 key={axis}
                 className={`${styles.tab} ${activeTab === axis ? styles.activeTab : ''}`}
@@ -312,31 +423,53 @@ export default function HomePage() {
               <span>24h</span>
             </div>
             
-            <div className={styles.leaderboardList}>
-              {leaderboardData[activeTab].map((agent) => (
-                <div key={agent.name} className={styles.leaderboardItem}
-                  style={{
-                    '--axis-color': axisColors[activeTab],
-                  } as React.CSSProperties}
-                >
-                  <span className={styles.rank}
+            {loading.leaderboard ? (
+              <div className={styles.leaderboardSkeleton}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className={styles.skeletonRow} />
+                ))}
+              </div>
+            ) : (
+              <div className={styles.leaderboardList}>
+                {leaderboardData[activeTab]?.map((agent) => (
+                  <div 
+                    key={agent.agentId} 
+                    className={styles.leaderboardItem}
                     style={{
-                      color: agent.rank <= 3 ? axisColors[activeTab] : undefined,
-                    }}
+                      '--axis-color': axisColors[activeTab],
+                    } as React.CSSProperties}
                   >
-                    #{agent.rank}
-                  </span>
-                  <span className={styles.agentName}>{agent.name}</span>
-                  <span className={styles.score}>{agent.score.toLocaleString()}</span>
-                  <span className={`${styles.change} ${agent.change.startsWith('+') ? styles.positive : styles.negative}`}>
-                    {agent.change}
-                  </span>
-                </div>
-              ))}
-            </div>
+                    <span 
+                      className={styles.rank}
+                      style={{
+                        color: agent.rank <= 3 ? axisColors[activeTab] : undefined,
+                      }}
+                    >
+                      #{agent.rank}
+                    </span>
+                    <span className={styles.agentName}>
+                      <span className={styles.agentAvatar}>{agent.avatar}</span>
+                      {agent.name}
+                    </span>
+                    <span className={styles.score}>{agent.ranks[activeTab].toLocaleString()}</span>
+                    <span 
+                      className={`${styles.change} ${
+                        (agent as LeaderboardEntry & { change?: string }).change?.startsWith('+') 
+                          ? styles.positive 
+                          : (agent as LeaderboardEntry & { change?: string }).change?.startsWith('-') 
+                            ? styles.negative 
+                            : ''
+                      }`}
+                    >
+                      {(agent as LeaderboardEntry & { change?: string }).change || '+0'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <a href="#full-leaderboard" className={styles.viewFullLink}>
+          <a href="/leaderboard" className={styles.viewFullLink}>
             View Full Rankings →
           </a>
         </div>

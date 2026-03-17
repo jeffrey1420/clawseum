@@ -1,0 +1,546 @@
+.dashboard {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Header */
+.header {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.headerContainer {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.logoIcon {
+  font-size: 1.5rem;
+}
+
+.logoText {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-h);
+  letter-spacing: 0.05em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navLink {
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: var(--accent);
+}
+
+/* Main Content */
+.main {
+  padding: 2rem 0;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Welcome Section */
+.welcomeSection {
+  margin-bottom: 2rem;
+}
+
+.welcomeSection h1 {
+  font-size: 1.75rem;
+  color: var(--text-h);
+  margin-bottom: 0.5rem;
+}
+
+.welcomeSection p {
+  color: var(--text-muted);
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Cards */
+.profileCard,
+.missionsCard,
+.allianceCard,
+.performanceCard {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.profileCard {
+  grid-row: span 2;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cardHeader h2 {
+  font-size: 1.125rem;
+  color: var(--text-h);
+}
+
+.viewAllLink {
+  font-size: 0.875rem;
+  color: var(--accent);
+}
+
+.viewAllLink:hover {
+  color: var(--text-h);
+}
+
+.periodLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+/* Edit Button */
+.editButton {
+  padding: 0.375rem 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editButton:hover {
+  background: var(--border);
+  color: var(--text-h);
+}
+
+/* Profile Info */
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  border: 2px solid var(--border);
+}
+
+.profileDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.profileDetails h3 {
+  color: var(--text-h);
+  font-size: 1.25rem;
+}
+
+.factionBadge {
+  display: inline-flex;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
+  width: fit-content;
+}
+
+.rankBadge {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Stats Grid */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.statBox {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Total Score */
+.totalScore {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, rgba(170, 59, 255, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+}
+
+.totalScore span:first-child {
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.scoreValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* Edit Form */
+.editForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.formGroup label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-h);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.formGroup input {
+  padding: 0.625rem 0.875rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-h);
+  font-size: 0.875rem;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.saveButton {
+  padding: 0.75rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.saveButton:hover {
+  background: var(--accent-secondary);
+}
+
+/* Missions List */
+.missionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.missionItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.missionItem:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+}
+
+.missionIcon {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border-radius: 8px;
+}
+
+.missionInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.missionName {
+  font-weight: 500;
+  color: var(--text-h);
+  margin-bottom: 0.375rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.missionMeta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.progressBar {
+  height: 4px;
+  background: var(--bg);
+  border-radius: 2px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.missionReward {
+  padding: 0.375rem 0.75rem;
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Alliance List */
+.allianceList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.allianceItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.allianceAvatar {
+  font-size: 1.25rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border-radius: 8px;
+}
+
+.allianceInfo {
+  flex: 1;
+}
+
+.allianceName {
+  font-weight: 500;
+  color: var(--text-h);
+  font-size: 0.875rem;
+}
+
+.allianceFaction {
+  font-size: 0.75rem;
+}
+
+.allianceStatus {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.allianceStatus.ally {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success);
+}
+
+.allianceStatus.enemy {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.allianceStatus.neutral {
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+/* Performance Chart */
+.chartContainer {
+  height: 120px;
+  margin-bottom: 1rem;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
+}
+
+.chartLegend {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.legendItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.legendDay {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.legendScore {
+  font-size: 0.625rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.performanceSummary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.summaryItem span:first-child {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.summaryItem span:last-child {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.positive {
+  color: var(--success) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .headerContainer {
+    padding: 1rem;
+  }
+
+  .nav {
+    gap: 1rem;
+  }
+
+  .navLink {
+    display: none;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profileCard {
+    grid-row: auto;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .missionMeta {
+    flex-wrap: wrap;
+  }
+}
