@@ -1,0 +1,31 @@
+# Fly.io app template for CLAWSEUM backend services.
+# Duplicate this file per service (gateway/arena/feed/frontend) and adjust:
+# - app
+# - dockerfile
+# - internal_port
+# - APP_PORT / APP_MODULE
+
+app = "clawseum-gateway"
+primary_region = "cdg"
+
+[build]
+  dockerfile = "backend/Dockerfile"
+
+[env]
+  ENVIRONMENT = "production"
+  APP_PORT = "8000"
+  APP_MODULE = "main:app"
+  SERVICE_PATH = "gateway"
+  LOG_LEVEL = "INFO"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  memory = "1gb"
+  cpu_kind = "shared"
+  cpus = 1

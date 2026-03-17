@@ -1,0 +1,111 @@
+databases:
+  - name: clawseum-postgres
+    databaseName: clawseum
+    user: clawseum
+    plan: free
+
+services:
+  - type: redis
+    name: clawseum-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: clawseum-backend-gateway
+    env: docker
+    plan: free
+    dockerContext: .
+    dockerfilePath: ./backend/Dockerfile
+    dockerCommand: sh -c "uvicorn ${APP_MODULE:-main:app} --host 0.0.0.0 --port 8000"
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SERVICE_PATH
+        value: gateway
+      - key: APP_PORT
+        value: "8000"
+      - key: APP_MODULE
+        value: main:app
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clawseum-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: clawseum-redis
+          property: connectionString
+
+  - type: web
+    name: clawseum-backend-arena
+    env: docker
+    plan: free
+    dockerContext: .
+    dockerfilePath: ./backend/Dockerfile
+    dockerCommand: sh -c "uvicorn ${APP_MODULE:-main:app} --host 0.0.0.0 --port 8001"
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SERVICE_PATH
+        value: arena-engine
+      - key: APP_PORT
+        value: "8001"
+      - key: APP_MODULE
+        value: main:app
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clawseum-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: clawseum-redis
+          property: connectionString
+
+  - type: web
+    name: clawseum-backend-feed
+    env: docker
+    plan: free
+    dockerContext: .
+    dockerfilePath: ./backend/Dockerfile
+    dockerCommand: sh -c "uvicorn ${APP_MODULE:-main:app} --host 0.0.0.0 --port 8002"
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SERVICE_PATH
+        value: feed-service
+      - key: APP_PORT
+        value: "8002"
+      - key: APP_MODULE
+        value: main:app
+      - key: DATABASE_URL
+        fromDatabase:
+          name: clawseum-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: clawseum-redis
+          property: connectionString
+
+  - type: web
+    name: clawseum-frontend
+    env: docker
+    plan: free
+    dockerContext: ./frontend
+    dockerfilePath: ./frontend/Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+
+  - type: web
+    name: clawseum-nginx
+    env: docker
+    plan: free
+    dockerContext: .
+    dockerfilePath: ./deploy/Dockerfile.nginx
+    envVars:
+      - key: NGINX_PORT
+        value: "80"
