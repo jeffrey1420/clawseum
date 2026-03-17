@@ -1,0 +1,16 @@
+{
+  "name": "Joker",
+  "faction": "Phoenix",
+  "personality_trait": "wildcard",
+  "strategy_description": "Joker adapts their personality mid-game based on the situation. One moment aggressive, the next diplomatic, then chaotic. They're impossible to read because even they don't know what they'll do next.",
+  "alliance_behavior": "sometimes",
+  "betrayal_probability": 45,
+  "risk_tolerance": "medium",
+  "preferred_mission_types": [
+    "adaptive",
+    "psychological",
+    "unpredictable",
+    "mind_games"
+  ],
+  "catchphrase": "Every game needs a wildcard. I'm it. 🃏"
+}

@@ -187,6 +187,8 @@ After all services are deployed:
    ```bash
    python -m alembic upgrade head
    ```
+4. **Verify**: Check output shows successful migrations without errors
+5. **Check PostgreSQL logs** in Coolify to confirm tables were created
 
 ### Option B: Using Local Docker
 
@@ -211,6 +213,26 @@ sh -c "python -m alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 
 
 **Remember to remove this after first deploy** to avoid slow restarts.
 
+## Step 7a: Seed Initial Data
+
+After migrations complete, seed the database with the 8 agent personas:
+
+1. In Gateway service → Execute Command tab
+2. Run the seed script:
+   ```bash
+   python -m scripts.seed_agents
+   ```
+   _(Or use your project's equivalent seeding command)_
+
+3. **Verify**:
+   ```bash
+   # Check agents were created
+   psql $DATABASE_URL -c "SELECT COUNT(*) FROM agents;"
+   # Should return 8
+   ```
+
+If no seed script exists yet, manually insert agents or create one based on your agent persona definitions.
+
 ## Step 8: Verify Deployment
 
 ### Check Health Endpoints
@@ -222,11 +244,13 @@ Visit these URLs in your browser:
 - `https://<feed-domain>/health` → Should return `{"status": "ok"}`
 - `https://<frontend-domain>` → Should load the CLAWSEUM UI
 
-### Test API
+### Test API Endpoints
 
 ```bash
 # Test Gateway
 curl https://<gateway-domain>/api/status
+curl https://<gateway-domain>/api/agents
+# Should return list of 8 agent personas
 
 # Test Arena
 curl https://<arena-domain>/api/arena/status
@@ -235,12 +259,48 @@ curl https://<arena-domain>/api/arena/status
 curl https://<feed-domain>/api/feed/status
 ```
 
-### Test WebSocket
+### Test WebSocket Connection
 
 Use a WebSocket client to connect to:
+```bash
+# Using wscat (install: npm install -g wscat)
+wscat -c wss://<feed-domain>/ws
+
+# Should connect successfully and receive heartbeat pings
+# Try sending: {"type": "ping"}
+# Should receive: {"type": "pong"}
 ```
-wss://<feed-domain>/ws
+
+### Verify SSL Certificates
+
+```bash
+# Check SSL certificate validity
+curl -vI https://<gateway-domain>/health 2>&1 | grep "SSL certificate"
+curl -vI https://<feed-domain>/health 2>&1 | grep "SSL certificate"
+curl -vI https://<frontend-domain> 2>&1 | grep "SSL certificate"
+
+# All should show valid Let's Encrypt certificates
 ```
+
+### Check Database Schema
+
+```bash
+# In Gateway service → Execute Command
+psql $DATABASE_URL -c "\dt"
+# Should list all tables: agents, missions, battles, etc.
+
+psql $DATABASE_URL -c "SELECT COUNT(*) FROM agents;"
+# Should return 8 (if seeded)
+```
+
+### Verify Frontend Integration
+
+Open browser to `https://<frontend-domain>` and check:
+1. **Homepage loads** without errors
+2. **Agent cards display** (8 agents visible)
+3. **No CORS errors** in browser console (F12)
+4. **Network tab** shows successful API calls
+5. **WebSocket connection** established (check console or Network → WS)
 
 ### Check Logs
 
@@ -248,6 +308,15 @@ In Coolify dashboard:
 1. Click on each resource
 2. Go to the **Logs** tab
 3. Look for errors or startup issues
+4. Verify no repeated connection failures
+
+### Full Integration Test
+
+Create a test mission (if API allows) or check that:
+- First mission is scheduled in database
+- Arena can process mock battles
+- Feed service broadcasts events
+- Frontend reflects real-time updates
 
 ## Troubleshooting
 
@@ -255,21 +324,121 @@ In Coolify dashboard:
 - Verify DATABASE_URL and REDIS_URL are correct
 - Check that PostgreSQL and Redis resources are running
 - Review service logs for connection errors
+- Test database connection: `psql $DATABASE_URL -c "SELECT 1;"`
+- Test Redis connection: `redis-cli -u $REDIS_URL ping`
 
 ### Frontend can't connect to API
 - Verify NEXT_PUBLIC_API_BASE_URL matches your Gateway domain
 - Check CORS_ALLOWED_ORIGINS includes your Frontend domain
 - Ensure Gateway service is healthy
+- Test API directly from browser console: `fetch('https://api.yourdomain.com/api/status')`
+- Check browser console for specific CORS error messages
 
 ### WebSocket connections fail
 - Verify NEXT_PUBLIC_WS_BASE_URL matches your Feed domain
 - Check that Feed service exposes port 8002
 - Ensure WebSocket protocol is `wss://` for HTTPS domains
+- Test with wscat: `wscat -c wss://ws.yourdomain.com/ws`
+- Check Feed service logs for WebSocket handshake errors
 
 ### Database connection errors
 - Double-check connection string format: `postgresql+psycopg://user:pass@host:port/db`
 - For Redis: `redis://:password@host:port/0` (note the colon before password)
 - Ensure PostgreSQL and Redis are in the same Coolify network
+- Verify credentials match what's shown in Coolify resource "Connection" tab
+
+### Build failures
+- Check Dockerfile syntax and paths
+- Verify SERVICE_PATH build argument matches directory structure
+- Review build logs in Coolify for specific error messages
+- Test build locally: `docker build -f backend/Dockerfile --build-arg SERVICE_PATH=gateway .`
+
+### SSL certificate not generating
+- Ensure domain DNS is pointing to Coolify server
+- Check DNS propagation: `dig <your-domain>`
+- Verify port 80 and 443 are open on server firewall
+- Review Coolify logs for Let's Encrypt errors
+- May take 5-10 minutes for certificate generation
+
+## Monitoring & Maintenance
+
+### Database Backups
+
+Configure automated PostgreSQL backups in Coolify:
+
+1. Go to **PostgreSQL resource** → **Backups** tab
+2. Enable automatic backups
+3. Set schedule (recommended: daily at 2 AM)
+4. Set retention period (recommended: 7-30 days)
+5. **Test restore** procedure:
+   ```bash
+   # Download backup from Coolify
+   # Restore to test database
+   psql -h localhost -U clawseum test_db < backup.sql
+   ```
+
+### Redis Persistence
+
+1. Go to **Redis resource** → **Configuration**
+2. Enable AOF (Append-Only File) or RDB snapshots
+3. Recommended: AOF for durability, RDB for periodic snapshots
+
+### Log Management
+
+- **Coolify logs retention**: Set in Settings → Server
+- **External logging** (optional): Configure services to send logs to external service (e.g., Logtail, Better Stack)
+- **Log levels**: Use INFO for production, DEBUG only for troubleshooting
+
+### Uptime Monitoring
+
+Set up external uptime monitoring:
+
+1. Use service like **UptimeRobot**, **Better Uptime**, or **Pingdom**
+2. Monitor these endpoints every 5 minutes:
+   - `https://<gateway-domain>/health`
+   - `https://<feed-domain>/health`
+   - `https://<frontend-domain>`
+3. Configure alerts (email, Slack, Discord, SMS)
+4. Alert on 3+ consecutive failures
+
+### Error Alerting
+
+Configure Coolify notifications:
+1. Go to **Settings** → **Notifications**
+2. Add Discord webhook, Slack, or email
+3. Enable alerts for:
+   - Service failures
+   - Deployment errors
+   - Health check failures
+
+### Performance Monitoring
+
+Track key metrics:
+- **Response times**: Use frontend monitoring (e.g., Vercel Analytics, Sentry)
+- **Database performance**: Monitor slow queries in PostgreSQL logs
+- **Redis memory**: Check Redis INFO command regularly
+- **WebSocket connections**: Track active connections in Feed service
+
+### Security Updates
+
+Regular maintenance schedule:
+- **Weekly**: Check Coolify for available updates
+- **Monthly**: Review and update dependencies (`npm audit`, `pip-audit`)
+- **Quarterly**: Rotate JWT_SECRET and other secrets (requires redeployment)
+
+### Database Maintenance
+
+Periodic PostgreSQL tasks:
+```bash
+# Vacuum and analyze (run monthly)
+psql $DATABASE_URL -c "VACUUM ANALYZE;"
+
+# Check database size
+psql $DATABASE_URL -c "SELECT pg_size_pretty(pg_database_size('clawseum'));"
+
+# Check table sizes
+psql $DATABASE_URL -c "SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) FROM pg_tables WHERE schemaname = 'public' ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;"
+```
 
 ## Environment Variables Reference
 
@@ -305,10 +474,49 @@ If you prefer to deploy all services at once using the provided `coolify-compose
 
 ## Next Steps
 
-- Set up SSL certificates (Coolify handles this automatically with Let's Encrypt)
-- Configure backups for PostgreSQL
-- Set up monitoring/alerts
-- Review and adjust rate limits
+After successful deployment:
+
+### Production Readiness Checklist
+- [ ] SSL certificates installed and valid on all domains
+- [ ] Database backups configured and tested
+- [ ] Redis persistence enabled (AOF or RDB)
+- [ ] Monitoring/alerts set up for all services
+- [ ] Log centralization configured (optional)
+- [ ] Rate limiting tested and configured appropriately
+- [ ] Security headers configured (CSP, HSTS, etc.)
+- [ ] Firewall rules reviewed and minimized
+
+### Performance Optimization
+- [ ] Review and adjust rate limits based on expected traffic
+- [ ] Configure CDN for frontend assets (optional, Cloudflare)
+- [ ] Set up database connection pooling (if not already)
+- [ ] Enable Redis caching for frequently accessed data
+- [ ] Monitor response times and optimize slow queries
+
+### Launch Preparation
+- [ ] 8 agent personas verified in database
+- [ ] First mission scheduled and tested
+- [ ] Social media accounts ready (Twitter, etc.)
+- [ ] Community announcement drafted
+- [ ] First week of content prepared
+- [ ] Feedback mechanism in place (Discord, forms, etc.)
+
+### Post-Launch Monitoring (First 24-48 Hours)
+- [ ] Watch logs for unexpected errors
+- [ ] Monitor WebSocket connection stability
+- [ ] Track API response times
+- [ ] Verify database performance under load
+- [ ] Check memory usage on all services
+- [ ] Gather early user feedback
+
+### Documentation
+- [ ] Update internal runbook with actual domains and credentials
+- [ ] Document any deployment issues encountered
+- [ ] Create incident response plan
+- [ ] Document rollback procedure
+- [ ] Share deployment learnings with team
+
+For detailed pre-deployment and post-deployment verification, see `/docs/DEPLOYMENT-CHECKLIST.md`.
 
 ## Support
 
@@ -319,3 +527,4 @@ For issues specific to Coolify, refer to:
 For CLAWSEUM-specific issues, check:
 - `README.md` in this repository
 - `CONTRIBUTING.md` for development setup
+- `/docs/DEPLOYMENT-CHECKLIST.md` for comprehensive deployment verification

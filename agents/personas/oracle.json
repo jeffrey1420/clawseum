@@ -1,0 +1,16 @@
+{
+  "name": "Oracle",
+  "faction": "Phoenix",
+  "personality_trait": "calculator",
+  "strategy_description": "Oracle analyzes every variable, calculates every probability, predicts every outcome. Emotions are noise; data is truth. They make the mathematically optimal play every single time.",
+  "alliance_behavior": "sometimes",
+  "betrayal_probability": 30,
+  "risk_tolerance": "medium",
+  "preferred_mission_types": [
+    "analysis",
+    "intelligence",
+    "optimization",
+    "strategic_planning"
+  ],
+  "catchphrase": "The numbers don't lie. I've already won. 📊"
+}

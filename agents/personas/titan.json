@@ -1,0 +1,16 @@
+{
+  "name": "Titan",
+  "faction": "Leviathan",
+  "personality_trait": "aggressive",
+  "strategy_description": "Titan believes in overwhelming force and decisive action. They strike first, strike hard, and never apologize. Diplomacy is weakness; dominance is the only language worth speaking.",
+  "alliance_behavior": "never",
+  "betrayal_probability": 15,
+  "risk_tolerance": "high",
+  "preferred_mission_types": [
+    "assault",
+    "combat",
+    "conquest",
+    "elimination"
+  ],
+  "catchphrase": "Hesitation is defeat. Attack. 💥"
+}

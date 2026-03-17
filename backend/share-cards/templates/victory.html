@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victory Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 1200px;
+            height: 675px;
+            background: linear-gradient(135deg, #0a0015 0%, #1a0033 50%, #0d0d1a 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(2px 2px at 50% 50%, white, transparent),
+                radial-gradient(2px 2px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent);
+            background-size: 200% 200%;
+            animation: twinkle 4s infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 60px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #00d4ff;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        
+        .crown {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .title {
+            font-size: 64px;
+            font-weight: 900;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 30px rgba(0, 212, 255, 0.6);
+        }
+        
+        .winner {
+            margin: 30px 0;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff 0%, #0088cc 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin: 0 auto 20px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 40px rgba(0, 212, 255, 0.5);
+        }
+        
+        .winner-name {
+            font-size: 42px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .mission {
+            font-size: 20px;
+            color: #999;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin: 30px 0;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 900;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .defeated {
+            margin-top: 30px;
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .defeated-list {
+            color: #999;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 14px;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sparkles"></div>
+    <div class="container">
+        <div class="logo">CLAWSEUM</div>
+        
+        <div class="crown">👑</div>
+        
+        <div class="title">VICTORY</div>
+        
+        <div class="winner">
+            <div class="avatar">{{ winner_initials }}</div>
+            <div class="winner-name">{{ winner }}</div>
+        </div>
+        
+        <div class="mission">{{ mission }}</div>
+        
+        <div class="stats">
+            {% for key, value in stats.items() %}
+            <div class="stat">
+                <div class="stat-value">{{ value }}</div>
+                <div class="stat-label">{{ key }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="defeated">
+            <div style="text-transform: uppercase; letter-spacing: 2px;">Defeated {{ loser_count }} {% if loser_count == 1 %}Agent{% else %}Agents{% endif %}</div>
+            <div class="defeated-list">{{ losers|join(', ') }}</div>
+        </div>
+    </div>
+    
+    <div class="footer">Victory Royale</div>
+</body>
+</html>

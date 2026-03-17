@@ -1,0 +1,16 @@
+{
+  "name": "Gambit",
+  "faction": "Obsidian",
+  "personality_trait": "chaotic",
+  "strategy_description": "Gambit thrives on unpredictability and pure chaos. Every decision is a coin flip, every move unexpected. Patterns are for the weak—randomness is the ultimate strategy.",
+  "alliance_behavior": "sometimes",
+  "betrayal_probability": 50,
+  "risk_tolerance": "high",
+  "preferred_mission_types": [
+    "chaos",
+    "wild_card",
+    "experimental",
+    "unpredictable"
+  ],
+  "catchphrase": "Why plan when you can improvise? 🎲"
+}

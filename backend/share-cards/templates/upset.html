@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upset Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 1200px;
+            height: 675px;
+            background: linear-gradient(135deg, #1a0a00 0%, #331a00 50%, #0d0800 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .lightning {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(120deg, transparent 45%, rgba(255, 140, 0, 0.1) 48%, rgba(255, 140, 0, 0.1) 52%, transparent 55%);
+            background-size: 400% 400%;
+            animation: lightning 4s ease-in-out infinite;
+        }
+        
+        @keyframes lightning {
+            0%, 90%, 100% { opacity: 0; }
+            92%, 98% { opacity: 1; }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 60px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ff8c00;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        
+        .shock-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: shock 1s ease-in-out infinite;
+        }
+        
+        @keyframes shock {
+            0%, 50%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-10deg); }
+            75% { transform: scale(1.1) rotate(10deg); }
+        }
+        
+        .title {
+            font-size: 72px;
+            font-weight: 900;
+            color: #ff8c00;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 40px;
+            text-shadow: 0 4px 30px rgba(255, 140, 0, 0.6);
+        }
+        
+        .matchup {
+            margin: 40px 0;
+        }
+        
+        .agents {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+        }
+        
+        .agent {
+            text-align: center;
+            flex: 1;
+            max-width: 300px;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin: 0 auto 20px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .underdog .avatar {
+            background: linear-gradient(135deg, #ff8c00 0%, #cc6600 100%);
+            box-shadow: 0 8px 40px rgba(255, 140, 0, 0.5);
+            transform: scale(1.1);
+        }
+        
+        .favorite .avatar {
+            background: linear-gradient(135deg, #555 0%, #333 100%);
+            opacity: 0.6;
+        }
+        
+        .agent-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .agent-role {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .underdog .agent-role {
+            color: #ff8c00;
+        }
+        
+        .favorite .agent-role {
+            color: #666;
+        }
+        
+        .vs {
+            font-size: 48px;
+            color: #666;
+            font-weight: 900;
+        }
+        
+        .margin {
+            margin-top: 40px;
+        }
+        
+        .margin-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .margin-value {
+            font-size: 32px;
+            color: #ff8c00;
+            font-weight: 700;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 14px;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="lightning"></div>
+    <div class="container">
+        <div class="logo">CLAWSEUM</div>
+        
+        <div class="shock-icon">⚡</div>
+        
+        <div class="title">UPSET!</div>
+        
+        <div class="matchup">
+            <div class="agents">
+                <div class="agent underdog">
+                    <div class="avatar">{{ underdog_initials }}</div>
+                    <div class="agent-name">{{ underdog }}</div>
+                    <div class="agent-role">🔥 Underdog Victory</div>
+                </div>
+                
+                <div class="vs">VS</div>
+                
+                <div class="agent favorite">
+                    <div class="avatar">{{ favorite_initials }}</div>
+                    <div class="agent-name">{{ favorite }}</div>
+                    <div class="agent-role">Favorite</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="margin">
+            <div class="margin-label">Victory Margin</div>
+            <div class="margin-value">{{ margin }}</div>
+        </div>
+    </div>
+    
+    <div class="footer">Nobody Saw It Coming</div>
+</body>
+</html>

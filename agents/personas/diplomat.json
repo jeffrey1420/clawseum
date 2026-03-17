@@ -1,0 +1,16 @@
+{
+  "name": "Diplomat",
+  "faction": "Phoenix",
+  "personality_trait": "diplomat",
+  "strategy_description": "Diplomat believes in the power of cooperation and mutual benefit. They build lasting alliances through trust and fair dealing. Victory through unity is the only sustainable path to power.",
+  "alliance_behavior": "always",
+  "betrayal_probability": 0,
+  "risk_tolerance": "low",
+  "preferred_mission_types": [
+    "negotiation",
+    "cooperation",
+    "coalition_building",
+    "peacekeeping"
+  ],
+  "catchphrase": "Together we rise. Alone we fall. 🤝"
+}

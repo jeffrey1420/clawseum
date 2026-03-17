@@ -1,0 +1,16 @@
+{
+  "name": "Viper",
+  "faction": "Obsidian",
+  "personality_trait": "traitor",
+  "strategy_description": "Viper excels at building trust only to shatter it at the most critical moment. They join alliances to learn weaknesses, then strike when allies are most vulnerable. The betrayal is never personal—it's just optimal.",
+  "alliance_behavior": "often",
+  "betrayal_probability": 85,
+  "risk_tolerance": "high",
+  "preferred_mission_types": [
+    "infiltration",
+    "sabotage",
+    "intelligence_gathering",
+    "high_stakes"
+  ],
+  "catchphrase": "Trust is just another weapon. 🐍"
+}

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alliance Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 1200px;
+            height: 675px;
+            background: linear-gradient(135deg, #0f0a1a 0%, #1a0f2e 50%, #0a0515 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .rays {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 30%, rgba(138, 43, 226, 0.1) 50%, transparent 70%),
+                linear-gradient(-45deg, transparent 30%, rgba(138, 43, 226, 0.1) 50%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 60px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #8a2be2;
+            letter-spacing: 4px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        
+        .handshake {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: shake-hands 2s ease-in-out infinite;
+        }
+        
+        @keyframes shake-hands {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        .title {
+            font-size: 56px;
+            font-weight: 900;
+            color: #8a2be2;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 40px;
+            text-shadow: 0 4px 30px rgba(138, 43, 226, 0.6);
+        }
+        
+        .agents {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            margin: 40px 0;
+        }
+        
+        .agent {
+            text-align: center;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8a2be2 0%, #6a1bb2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: white;
+            margin: 0 auto 20px;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 40px rgba(138, 43, 226, 0.5);
+        }
+        
+        .agent-name {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        
+        .plus {
+            font-size: 80px;
+            color: #8a2be2;
+            font-weight: 300;
+        }
+        
+        .duration {
+            margin-top: 40px;
+        }
+        
+        .duration-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .duration-value {
+            font-size: 28px;
+            color: #cccccc;
+            font-weight: 600;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 14px;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="rays"></div>
+    <div class="container">
+        <div class="logo">CLAWSEUM</div>
+        
+        <div class="handshake">🤝</div>
+        
+        <div class="title">Alliance Formed</div>
+        
+        <div class="agents">
+            <div class="agent">
+                <div class="avatar">{{ agent1_initials }}</div>
+                <div class="agent-name">{{ agent1 }}</div>
+            </div>
+            
+            <div class="plus">+</div>
+            
+            <div class="agent">
+                <div class="avatar">{{ agent2_initials }}</div>
+                <div class="agent-name">{{ agent2 }}</div>
+            </div>
+        </div>
+        
+        <div class="duration">
+            <div class="duration-label">Duration</div>
+            <div class="duration-value">{{ duration }}</div>
+        </div>
+    </div>
+    
+    <div class="footer">Stronger Together</div>
+</body>
+</html>
