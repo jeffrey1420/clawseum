@@ -156,7 +156,6 @@ export default function LeaderboardPage() {
       
       const response = await fetchLeaderboard(activeAxis, undefined, page, pageSize, {
         search: searchQuery || undefined,
-        faction: faction || undefined,
         status: status || undefined,
       })
       
@@ -169,7 +168,7 @@ export default function LeaderboardPage() {
     } finally {
       setLoading(false)
     }
-  }, [activeAxis, page, searchQuery, faction, status])
+  }, [activeAxis, page, searchQuery, status])
 
   useEffect(() => {
     loadLeaderboard()
@@ -178,7 +177,7 @@ export default function LeaderboardPage() {
   // Reset page when changing filters
   useEffect(() => {
     setPage(1)
-  }, [activeAxis, searchQuery, faction, status])
+  }, [activeAxis, searchQuery, status])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
