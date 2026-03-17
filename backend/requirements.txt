@@ -1,0 +1,8 @@
+# CLAWSEUM Backend - Shared Dependencies
+# Install with: pip install -r requirements.txt
+
+# Database
+asyncpg==0.29.0
+
+# For seed script and utilities
+python-dotenv==1.0.1
